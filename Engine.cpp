@@ -27,8 +27,7 @@ void Engine::draw()
 
 Engine::Engine()
 {
-	background_texture.loadFromFile("image/background.jpg");
-	background.setTexture(&background_texture);
+	background.setTexture(&AssetManager::GetTexture("image/background.jpg"));
 }
 
 void Engine::run()

@@ -2,12 +2,14 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include "AssetManager.h"
 
 class Engine
 {
 	std::unique_ptr<sf::RenderWindow> window = std::make_unique<sf::RenderWindow>(sf::VideoMode(1920, 1080), L"Battle city", sf::Style::Fullscreen);
 	sf::RectangleShape background = sf::RectangleShape(sf::Vector2f(1920, 1080));
-	sf::Texture background_texture;
+
+	AssetManager manager;
 
 	void input();
 	void update(sf::Time& deltaTime);
