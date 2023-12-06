@@ -3,6 +3,8 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include "AssetManager.h"
+#include "GameMenu.h"
+#include <vector>
 
 class Engine
 {
@@ -16,6 +18,7 @@ class Engine
 	void draw();
 
 public:
+	void GameMenu();
 	Engine();
 	void run();
 };
