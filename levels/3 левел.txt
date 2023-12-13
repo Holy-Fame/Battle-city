@@ -1,0 +1,35 @@
+const int MAP_WIDTH = 26;
+const int MAP_HIGHT = 26;
+sf::String secondLevelMap[MAP_HIGHT] =
+{
+	"              wwww        ",
+	"                          ",
+	"    wwwwwwww        ww    ",
+	"    ww              ww    ",
+	"    ww      kk  wwwwww    ",
+	"    ww      kk    wwww    ",
+	"  ww      kkww      ww    ",
+	"  ww      kkww      ww    ",
+	"        kkwwww      wwww  ",
+	"        kkwwww        ww  ",
+	"  ww  kkwwwwww  ww        ",
+	"  ww  kkwwwwww  ww        ",
+	"   w  wwww      wwww      ",
+	"   w  wwww      wwww      ",
+	"w       ww  wwwwww     w  ",
+	"w       ww  wwwwww     w  ",
+	"   www      wwwwkk    ww  ",
+	"   www      wwwwkk    ww  ",
+	"  ww        wwkk    wwww  ",
+	"  ww        wwkk    wwww  ",
+	"  wwwwww    kk    ww      ",
+	"      ww    kk    ww      ",
+	"                  ww    ww",
+	"           ####       wwww",
+	"           #  #           ",
+	"wwww       #  #           ",
+};
+
+
+
+
