@@ -85,7 +85,8 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						continue;
+						SingleGame(window);
+						break;
 					case 1:
 						continue;
 					case 2:
@@ -102,5 +103,75 @@ void Engine::GameMenu()
 			mymenu.draw();
 			window.display();
 		}
+	}
+}
+
+void Engine::SingleGame(sf::RenderWindow& window)
+{
+	const int MAP_WIDTH = 26;
+	const int MAP_HIGHT = 26;
+	sf::String firstLevelMap[MAP_HIGHT] =
+	{
+		"                          ",
+		"                          ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"          ##  ##          ",
+		"          ##  ##          ",
+		"##  ####          ####  ##",
+		"ww  ####          ####  ww",
+		"          ##  ##          ",
+		"          ######          ",
+		"  ##  ##  ######  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##   ####   ##  ##  ",
+		"           #  #           ",
+		"           #  #           ",
+	};
+	sf::Image mapImage;
+	mapImage.loadFromFile("image/tiles.png");
+	sf::Texture map;
+	map.loadFromImage(mapImage);
+	sf::Sprite s_Map;
+	s_Map.setTexture(map);
+
+	float width = sf::VideoMode::getDesktopMode().width;
+	float height = sf::VideoMode::getDesktopMode().height;
+
+	sf::RectangleShape background(sf::Vector2f(1920, 1080));
+	background.setTexture(&AssetManager::GetTexture("image/game.png"));
+
+
+	while (window.isOpen()) {
+		window.clear();
+
+		window.draw(background);
+
+		for (int i = 0; i < MAP_HIGHT; ++i)
+		{
+			for (int j = 0; j < MAP_WIDTH; ++j)
+			{
+				if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
+				if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
+				if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
+				s_Map.setPosition(j * 40 + 440, i * 40 + 40);
+				window.draw(s_Map);
+			}
+		}
+		window.display();
+
+
+
 	}
 }

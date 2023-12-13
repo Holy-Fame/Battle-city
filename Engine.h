@@ -21,4 +21,5 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
+	void SingleGame(sf::RenderWindow& window);
 };
