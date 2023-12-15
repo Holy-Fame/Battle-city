@@ -85,7 +85,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window);
+						RenderMap(window);
 						break;
 					case 1:
 						continue;
@@ -106,7 +106,7 @@ void Engine::GameMenu()
 	}
 }
 
-void Engine::SingleGame(sf::RenderWindow& window)
+void Engine::RenderMap(sf::RenderWindow& window)
 {
 	const int MAP_WIDTH = 26;
 	const int MAP_HIGHT = 26;
@@ -170,8 +170,10 @@ void Engine::SingleGame(sf::RenderWindow& window)
 			}
 		}
 		window.display();
-
-
-
 	}
+}
+
+void Engine::SingleGame(sf::RenderWindow& window)
+{
+	RenderMap(window);
 }
