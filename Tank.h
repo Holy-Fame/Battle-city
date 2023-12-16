@@ -14,5 +14,8 @@ public:
 
 	Tank(sf::String F, int X, int Y, float W, float H);
 	void update(float time);
+	float getTankX();
+	float getTankY();
+	void interectionWithMap();
 };
 

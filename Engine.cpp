@@ -86,6 +86,7 @@ void Engine::GameMenu()
 					{
 					case 0:
 						continue;
+						SingleGame(window);
 					case 1:
 						continue;
 					case 2:
@@ -100,6 +101,129 @@ void Engine::GameMenu()
 			window.clear();
 			window.draw(background);
 			mymenu.draw();
+			window.display();
+		}
+	}
+}
+
+void Engine::RenderMap(sf::RenderWindow& window)
+{
+
+}
+
+void Engine::SingleGame(sf::RenderWindow& window)
+{
+	const int MAP_WIDTH = 26;
+	const int MAP_HIGHT = 25;
+	sf::String firstLevelMap[MAP_HIGHT] =
+	{
+		"                          ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"          ##  ##          ",
+		"          ##  ##          ",
+		"##  ####          ####  ##",
+		"ww  ####          ####  ww",
+		"          ##  ##          ",
+		"          ######          ",
+		"  ##  ##  ######  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##   ####   ##  ##  ",
+		"           #  #           ",
+		"           #  #           ",
+	};
+
+	sf::Image mapImage;
+	mapImage.loadFromFile("image/tiles.png");
+	sf::Texture map;
+	map.loadFromImage(mapImage);
+	sf::Sprite s_Map;
+	s_Map.setTexture(map);
+
+	float width = sf::VideoMode::getDesktopMode().width;
+	float height = sf::VideoMode::getDesktopMode().height;
+
+	sf::RectangleShape background(sf::Vector2f(1920, 1080));
+	background.setTexture(&AssetManager::GetTexture("image/game.png"));
+
+
+	while (window.isOpen()) {
+
+		float CurrentFrame = 0;
+		sf::Clock clock;
+
+		Tank t("tank.png", 800, 1000, 40.0, 40.0);
+
+		while (window.isOpen())
+		{
+			float time = clock.getElapsedTime().asMicroseconds();
+			clock.restart();
+			time = time / 800;
+
+			
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+			{
+				exit(1);
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+			{
+				t.dir = 1; t.speed = 0.1;
+				CurrentFrame += 0.005 * time;
+				if (CurrentFrame > 2) CurrentFrame -= 2;
+				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 40, 40, 40));
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+				t.dir = 0; t.speed = 0.1;
+				CurrentFrame += 0.005 * time;
+				if (CurrentFrame > 2) CurrentFrame -= 2;
+				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 80, 40, 40));
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+				t.dir = 3; t.speed = 0.1;
+				CurrentFrame += 0.005 * time;
+				if (CurrentFrame > 2) CurrentFrame -= 2;
+				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 120, 40, 40));
+
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+				t.dir = 2; t.speed = 0.1;
+				CurrentFrame += 0.005 * time;
+				if (CurrentFrame > 2) CurrentFrame -= 2;
+				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 0, 40, 40));
+
+			}
+
+			t.update(time);
+
+			window.draw(background);
+
+			for (int i = 0; i < MAP_HIGHT; ++i)
+			{
+				for (int j = 0; j < MAP_WIDTH; ++j)
+				{
+					if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
+					if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
+					if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
+					s_Map.setPosition(j * 40 + 440, i * 40 + 40);
+					window.draw(s_Map);
+				}
+			}
+			window.draw(t.sprite);
 			window.display();
 		}
 	}

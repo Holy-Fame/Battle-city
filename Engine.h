@@ -5,6 +5,7 @@
 #include "AssetManager.h"
 #include "GameMenu.h"
 #include <vector>
+#include "Tank.h"
 
 class Engine
 {
@@ -21,4 +22,6 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
+	void RenderMap(sf::RenderWindow& window);
+	void SingleGame(sf::RenderWindow& window);
 };

@@ -26,7 +26,83 @@ void Tank::update(float time)
 	x += dx * time;
 	y += dy * time;
 
+	if (x <= 440) x = 440;
+	if (x >= 1440) x = 1440;
+	if (y <= 40) y = 40;
+	if (y >= 1000) y = 1000;
+
 	speed = 0;
 
 	sprite.setPosition(x, y);
+	interectionWithMap();
+}
+
+float Tank::getTankX()
+{
+	return x;
+}
+
+float Tank::getTankY()
+{
+	return y;
+}
+
+void Tank::interectionWithMap()
+{
+	const int MAP_WIDTH = 26;
+	const int MAP_HIGHT = 25;
+	sf::String firstLevelMap[MAP_HIGHT] =
+	{
+		"                          ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"          ##  ##          ",
+		"          ##  ##          ",
+		"##  ####          ####  ##",
+		"ww  ####          ####  ww",
+		"          ##  ##          ",
+		"          ######          ",
+		"  ##  ##  ######  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##  ##  ##  ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##          ##  ##  ",
+		"  ##  ##   ####   ##  ##  ",
+		"           #  #           ",
+		"           #  #           ",
+	};
+
+	for (int i = (y - 40) / 40; i < (y - 40 + h) / 40; i++)
+	{
+		for (int j = (x - 440) / 40; j < (x - 440 + w) / 40; j++)
+		{
+			if (firstLevelMap[i][j] == '#' || firstLevelMap[i][j] == 'w')
+			{
+				if (dy > 0)
+				{
+					y = i * 40 - h + 40;
+				}
+				if (dy < 0)
+				{
+					y = i * 40 + 40 + 40;
+				}
+				if (dx > 0)
+				{
+					x = j * 40 - w + 440;
+				}
+				if (dx < 0)
+				{
+					x = j * 40 + 40 + 440;
+				}
+			}
+		}
+	}
 }
