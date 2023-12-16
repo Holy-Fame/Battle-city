@@ -85,8 +85,8 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						continue;
 						SingleGame(window);
+						break;
 					case 1:
 						continue;
 					case 2:
