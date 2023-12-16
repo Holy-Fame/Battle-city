@@ -6,6 +6,9 @@
 #include "GameMenu.h"
 #include <vector>
 #include "Tank.h"
+#include "Bullet.h"
+#include <vector>
+#include <list>
 
 class Engine
 {

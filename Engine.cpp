@@ -157,74 +157,77 @@ void Engine::SingleGame(sf::RenderWindow& window)
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
+	sf::Image playerImage;
+	playerImage.loadFromFile("image/tank.png");
+	Tank p1(playerImage, 800, 990, 40, 40, "Player1");
 
+	sf::Image bulletImage;
+	bulletImage.loadFromFile("image/bullet.png");
+
+	std::list<Entity*> entities;
+	std::list<Entity*>::iterator it;
+	std::list<Entity*>::iterator i2;
+
+	sf::Clock clock;
 	while (window.isOpen()) {
 
 		float CurrentFrame = 0;
-		sf::Clock clock;
+		float time = clock.getElapsedTime().asMicroseconds();
+		clock.restart();
+		time = time / 800;
 
-		Tank t("tank.png", 800, 1000, 40.0, 40.0);
-
-		while (window.isOpen())
-		{
-			float time = clock.getElapsedTime().asMicroseconds();
-			clock.restart();
-			time = time / 800;
-
-			
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return))
+		sf::Event event;
+		while (window.pollEvent(event))
+		{	
+			if (event.type == sf::Event::KeyReleased)
 			{
-				exit(1);
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-			{
-				t.dir = 1; t.speed = 0.1;
-				CurrentFrame += 0.005 * time;
-				if (CurrentFrame > 2) CurrentFrame -= 2;
-				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 40, 40, 40));
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-				t.dir = 0; t.speed = 0.1;
-				CurrentFrame += 0.005 * time;
-				if (CurrentFrame > 2) CurrentFrame -= 2;
-				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 80, 40, 40));
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-				t.dir = 3; t.speed = 0.1;
-				CurrentFrame += 0.005 * time;
-				if (CurrentFrame > 2) CurrentFrame -= 2;
-				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 120, 40, 40));
-
-			}
-
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-				t.dir = 2; t.speed = 0.1;
-				CurrentFrame += 0.005 * time;
-				if (CurrentFrame > 2) CurrentFrame -= 2;
-				t.sprite.setTextureRect(sf::IntRect(40 * int(CurrentFrame), 0, 40, 40));
-
-			}
-
-			t.update(time);
-
-			window.draw(background);
-
-			for (int i = 0; i < MAP_HIGHT; ++i)
-			{
-				for (int j = 0; j < MAP_WIDTH; ++j)
+				if (event.key.code == sf::Keyboard::Space)
 				{
-					if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
-					if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
-					if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
-					s_Map.setPosition(j * 40 + 440, i * 40 + 40);
-					window.draw(s_Map);
+					entities.push_back(new Bullet(bulletImage, p1.x, p1.y, 8, 8, p1.state, "Bullet"));
+				}
+				if (event.key.code == sf::Keyboard::Return)
+				{
+					exit(1);
 				}
 			}
-			window.draw(t.sprite);
-			window.display();
 		}
+
+		for (it = entities.begin(); it != entities.end();)
+		{
+			Entity* b = *it;
+			b->update(time);
+			if (b->life == false)
+			{
+				it = entities.erase(it);
+				delete b;
+			}
+			else
+			{
+				it++;
+			}
+		}
+		p1.update(time);
+		window.clear();
+		
+		window.draw(background);
+
+		for (int i = 0; i < MAP_HIGHT; ++i)
+		{
+			for (int j = 0; j < MAP_WIDTH; ++j)
+			{
+				if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
+				if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
+				if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
+				s_Map.setPosition(j * 40 + 440, i * 40 + 40);
+				window.draw(s_Map);
+			}
+		}
+
+		for (it = entities.begin(); it != entities.end(); it++)
+		{
+			window.draw((*it)->sprite);
+		}
+		window.draw(p1.sprite);
+		window.display();
 	}
 }

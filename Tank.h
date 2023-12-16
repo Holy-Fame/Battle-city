@@ -1,21 +1,17 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "AssetManager.h"
+#include "Entity.h"
 
-class Tank
+class Tank : public Entity
 {
 public:
-	float x, y, w, h, dx, dy, speed = 0;
-	int dir = 0;
-	sf::String file;
-	sf::Image image;
-	sf::Texture texture;
-	sf::Sprite sprite;
+	enum {left, right, up, down} state;
+	int playerScore;
+	Tank(sf::Image& image, float X, float Y, int W, int H, sf::String Name);
 
-	Tank(sf::String F, int X, int Y, float W, float H);
+	void control();
+	void checkCollisionWithMap(float Dx, float Dy);
 	void update(float time);
-	float getTankX();
-	float getTankY();
-	void interectionWithMap();
 };
 
