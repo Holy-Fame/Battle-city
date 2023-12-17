@@ -1,4 +1,35 @@
 #include "Engine.h"
+#include "Maps.h"
+
+int printMap(sf::RenderWindow& window, sf::String* level)
+{
+	sf::Image mapImage;
+	mapImage.loadFromFile("image/tiles.png");
+	sf::Texture map;
+	map.loadFromImage(mapImage);
+	sf::Sprite s_Map;
+	s_Map.setTexture(map);
+
+	for (int i = 0; i < MAP_HIGHT; ++i)
+	{
+		for (int j = 0; j < MAP_WIDTH; ++j)
+		{
+			if (level[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
+			if (level[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
+			if (level[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
+
+			if (level[i][j] == 'q') s_Map.setTextureRect(sf::IntRect(160, 120, 40, 40));
+			if (level[i][j] == 'o') s_Map.setTextureRect(sf::IntRect(200, 120, 40, 40));
+			if (level[i][j] == 'e') s_Map.setTextureRect(sf::IntRect(160, 160, 40, 40));
+			if (level[i][j] == 'r') s_Map.setTextureRect(sf::IntRect(200, 160, 40, 40));
+
+			s_Map.setPosition(j * 40 + 440, i * 40 + 20);
+			window.draw(s_Map);
+		}
+	}
+
+	return 0;
+}
 
 void Engine::input()
 {
@@ -85,7 +116,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window);
+						SingleGame(window, mapsArr);
 						break;
 					case 1:
 						continue;
@@ -106,50 +137,9 @@ void Engine::GameMenu()
 	}
 }
 
-void Engine::RenderMap(sf::RenderWindow& window)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr)
 {
-
-}
-
-void Engine::SingleGame(sf::RenderWindow& window)
-{
-	const int MAP_WIDTH = 26;
-	const int MAP_HIGHT = 25;
-	sf::String firstLevelMap[MAP_HIGHT] =
-	{
-		"                          ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"          ##  ##          ",
-		"          ##  ##          ",
-		"##  ####          ####  ##",
-		"ww  ####          ####  ww",
-		"          ##  ##          ",
-		"          ######          ",
-		"  ##  ##  ######  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##   ####   ##  ##  ",
-		"           #  #           ",
-		"           #  #           ",
-	};
-
-	sf::Image mapImage;
-	mapImage.loadFromFile("image/tiles.png");
-	sf::Texture map;
-	map.loadFromImage(mapImage);
-	sf::Sprite s_Map;
-	s_Map.setTexture(map);
+	printMap(window, mapsArr[1]);
 
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -195,7 +185,7 @@ void Engine::SingleGame(sf::RenderWindow& window)
 		for (it = entities.begin(); it != entities.end();)
 		{
 			Entity* b = *it;
-			b->update(time);
+			b->update(time, mapsArr);
 			if (b->life == false)
 			{
 				it = entities.erase(it);
@@ -206,22 +196,12 @@ void Engine::SingleGame(sf::RenderWindow& window)
 				it++;
 			}
 		}
-		p1.update(time);
+		p1.update(time, mapsArr);
 		window.clear();
 		
 		window.draw(background);
 
-		for (int i = 0; i < MAP_HIGHT; ++i)
-		{
-			for (int j = 0; j < MAP_WIDTH; ++j)
-			{
-				if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
-				if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
-				if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
-				s_Map.setPosition(j * 40 + 440, i * 40 + 40);
-				window.draw(s_Map);
-			}
-		}
+		printMap(window, mapsArr[1]);
 
 		for (it = entities.begin(); it != entities.end(); it++)
 		{

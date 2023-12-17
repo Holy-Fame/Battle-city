@@ -11,7 +11,7 @@ public:
 	Tank(sf::Image& image, float X, float Y, int W, int H, sf::String Name);
 
 	void control();
-	void checkCollisionWithMap(float Dx, float Dy);
-	void update(float time);
+	void checkCollisionWithMap(float Dx, float Dy, sf::String* level);
+	void update(float time, std::vector<sf::String*> mapsArr);
 };
 

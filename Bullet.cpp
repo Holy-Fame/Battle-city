@@ -10,7 +10,7 @@ Bullet::Bullet(sf::Image& image, float X, float Y, int W, int H, int dir, sf::St
 	life = true;
 }
 
-void Bullet::update(float time)
+void Bullet::update(float time, std::vector<sf::String*> mapsArr)
 {
 	switch (direction)
 	{

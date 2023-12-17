@@ -25,6 +25,5 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
-	void RenderMap(sf::RenderWindow& window);
-	void SingleGame(sf::RenderWindow& window);
+	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr);
 };
