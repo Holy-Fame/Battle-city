@@ -1,4 +1,48 @@
 #include "Engine.h"
+#include "Maps.h"
+
+int printMap(sf::RenderWindow& window, sf::String* level)
+{
+	sf::Image mapImage;
+	mapImage.loadFromFile("image/tiles.png");
+	sf::Texture map;
+	map.loadFromImage(mapImage);
+	sf::Sprite s_Map;
+	s_Map.setTexture(map);
+
+	float width = sf::VideoMode::getDesktopMode().width;
+	float height = sf::VideoMode::getDesktopMode().height;
+
+	sf::RectangleShape background(sf::Vector2f(1920, 1080));
+	background.setTexture(&AssetManager::GetTexture("image/game.png"));
+
+	while (window.isOpen()) {
+		window.clear();
+
+		window.draw(background);
+
+		for (int i = 0; i < MAP_HIGHT; ++i)
+		{
+			for (int j = 0; j < MAP_WIDTH; ++j)
+			{
+				if (level[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
+				if (level[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
+				if (level[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
+				if (level[i][j] == 'k') s_Map.setTextureRect(sf::IntRect(160, 80, 40, 40));
+
+				if (level[i][j] == 'q') s_Map.setTextureRect(sf::IntRect(160, 120, 40, 40));
+				if (level[i][j] == 'o') s_Map.setTextureRect(sf::IntRect(200, 120, 40, 40));
+				if (level[i][j] == 'e') s_Map.setTextureRect(sf::IntRect(160, 160, 40, 40));
+				if (level[i][j] == 'r') s_Map.setTextureRect(sf::IntRect(200, 160, 40, 40));
+
+				s_Map.setPosition(j * 40 + 440, i * 40 + 20);
+				window.draw(s_Map);
+			}
+		}
+		window.display();
+	}
+	return 0;
+}
 
 void Engine::input()
 {
@@ -58,9 +102,9 @@ void Engine::GameMenu()
 
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/background.jpg"));
-	
+
 	std::vector<sf::String>name_menu{ L"1 Player", L"2 Player", "     Exit" };
-	 
+
 	game::GameMenu mymenu(window, 200, 585, name_menu, 70, 140);
 
 	while (window.isOpen())
@@ -85,7 +129,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window);
+						SingleGame(window, mapsArr);
 						break;
 					case 1:
 						continue;
@@ -106,72 +150,7 @@ void Engine::GameMenu()
 	}
 }
 
-void Engine::SingleGame(sf::RenderWindow& window)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String* > mapsArr)
 {
-	const int MAP_WIDTH = 26;
-	const int MAP_HIGHT = 26;
-	sf::String firstLevelMap[MAP_HIGHT] =
-	{
-		"                          ",
-		"                          ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"          ##  ##          ",
-		"          ##  ##          ",
-		"##  ####          ####  ##",
-		"ww  ####          ####  ww",
-		"          ##  ##          ",
-		"          ######          ",
-		"  ##  ##  ######  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##  ##  ##  ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##          ##  ##  ",
-		"  ##  ##   ####   ##  ##  ",
-		"           #  #           ",
-		"           #  #           ",
-	};
-	sf::Image mapImage;
-	mapImage.loadFromFile("image/tiles.png");
-	sf::Texture map;
-	map.loadFromImage(mapImage);
-	sf::Sprite s_Map;
-	s_Map.setTexture(map);
-
-	float width = sf::VideoMode::getDesktopMode().width;
-	float height = sf::VideoMode::getDesktopMode().height;
-
-	sf::RectangleShape background(sf::Vector2f(1920, 1080));
-	background.setTexture(&AssetManager::GetTexture("image/game.png"));
-
-
-	while (window.isOpen()) {
-		window.clear();
-
-		window.draw(background);
-
-		for (int i = 0; i < MAP_HIGHT; ++i)
-		{
-			for (int j = 0; j < MAP_WIDTH; ++j)
-			{
-				if (firstLevelMap[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
-				if (firstLevelMap[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
-				if (firstLevelMap[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
-				s_Map.setPosition(j * 40 + 440, i * 40 + 40);
-				window.draw(s_Map);
-			}
-		}
-		window.display();
-
-
-
-	}
+	printMap(window, mapsArr[0]);
 }
