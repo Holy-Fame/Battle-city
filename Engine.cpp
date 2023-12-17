@@ -152,7 +152,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
 	sf::Image playerImage;
-	playerImage.loadFromFile("image/tank.png");
+	playerImage.loadFromFile("image/enemy2.png");
 	Tank p1(playerImage, 800, 960, 60, 60, "Player1");
 
 	sf::Image bulletImage;
