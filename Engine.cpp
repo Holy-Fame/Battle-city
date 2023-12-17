@@ -27,7 +27,6 @@ int printMap(sf::RenderWindow& window, sf::String* level)
 			window.draw(s_Map);
 		}
 	}
-
 	return 0;
 }
 
@@ -89,9 +88,9 @@ void Engine::GameMenu()
 
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/background.jpg"));
-	
+
 	std::vector<sf::String>name_menu{ L"1 Player", L"2 Player", "     Exit" };
-	 
+
 	game::GameMenu mymenu(window, 200, 585, name_menu, 70, 140);
 
 	while (window.isOpen())
