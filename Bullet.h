@@ -9,5 +9,6 @@ public:
 
 	Bullet(sf::Image& image, float X, float Y, int W, int H, int dir, sf::String Name);
 	void update(float time, sf::String* level);
+	void checkCollisionWithMap(float Dx, float Dy, sf::String* level);
 };
 
