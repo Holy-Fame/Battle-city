@@ -23,6 +23,11 @@ int printMap(sf::RenderWindow& window, sf::String* level)
 			if (level[i][j] == 'e') s_Map.setTextureRect(sf::IntRect(160, 160, 40, 40));
 			if (level[i][j] == 'r') s_Map.setTextureRect(sf::IntRect(200, 160, 40, 40));
 
+			if (level[i][j] == '_') s_Map.setTextureRect(sf::IntRect(60, 120, 40, 40));
+			if (level[i][j] == '-') s_Map.setTextureRect(sf::IntRect(120, 0, 40, 40));
+			if (level[i][j] == ')') s_Map.setTextureRect(sf::IntRect(80, 100, 40, 40));
+			if (level[i][j] == '(') s_Map.setTextureRect(sf::IntRect(40, 60, 40, 40));
+
 			s_Map.setPosition(j * 40 + 440, i * 40 + 20);
 			window.draw(s_Map);
 		}
@@ -136,9 +141,9 @@ void Engine::GameMenu()
 	}
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr)
 {
-	printMap(window, mapsArr[1]);
+
 
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -153,7 +158,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 	sf::Image bulletImage;
 	bulletImage.loadFromFile("image/bullet.png");
 
-	std::list<Entity*> entities;
+	std::list<Entity*> bullets;
 	std::list<Entity*>::iterator it;
 	std::list<Entity*>::iterator i2;
 
@@ -172,7 +177,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
-					entities.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
+					bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
 				}
 				if (event.key.code == sf::Keyboard::Return)
 				{
@@ -181,13 +186,13 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			}
 		}
 
-		for (it = entities.begin(); it != entities.end();)
+		for (it = bullets.begin(); it != bullets.end();)
 		{
 			Entity* b = *it;
 			b->update(time, mapsArr[1]);
 			if (b->life == false)
 			{
-				it = entities.erase(it);
+				it = bullets.erase(it);
 				delete b;
 			}
 			else
@@ -202,7 +207,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 		printMap(window, mapsArr[1]);
 
-		for (it = entities.begin(); it != entities.end(); it++)
+		for (it = bullets.begin(); it != bullets.end(); it++)
 		{
 			window.draw((*it)->sprite);
 		}
