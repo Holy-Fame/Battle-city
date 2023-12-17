@@ -28,7 +28,6 @@ int printMap(sf::RenderWindow& window, sf::String* level)
 				if (level[i][j] == '#') s_Map.setTextureRect(sf::IntRect(120, 120, 40, 40));
 				if (level[i][j] == ' ') s_Map.setTextureRect(sf::IntRect(0, 0, 40, 40));
 				if (level[i][j] == 'w') s_Map.setTextureRect(sf::IntRect(160, 40, 40, 40));
-				if (level[i][j] == 'k') s_Map.setTextureRect(sf::IntRect(160, 80, 40, 40));
 
 				if (level[i][j] == 'q') s_Map.setTextureRect(sf::IntRect(160, 120, 40, 40));
 				if (level[i][j] == 'o') s_Map.setTextureRect(sf::IntRect(200, 120, 40, 40));
@@ -152,5 +151,5 @@ void Engine::GameMenu()
 
 void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String* > mapsArr)
 {
-	printMap(window, mapsArr[0]);
+	printMap(window, mapsArr[1]);
 }
