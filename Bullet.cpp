@@ -2,15 +2,15 @@
 
 Bullet::Bullet(sf::Image& image, float X, float Y, int W, int H, int dir, sf::String Name) : Entity(image, X, Y, W, H, Name)
 {
-	x = X + 16;
-	y = Y + 16;
+	x = X + 25;
+	y = Y + 25;
 	direction = dir;
 	speed = 0.6;
 	w = h = 8;
 	life = true;
 }
 
-void Bullet::update(float time, std::vector<sf::String*> mapsArr)
+void Bullet::update(float time, sf::String* levela)
 {
 	switch (direction)
 	{
@@ -24,9 +24,9 @@ void Bullet::update(float time, std::vector<sf::String*> mapsArr)
 	y += dy * time;
 
 	if (x <= 440) life = false;
-	if (x >= 1480) life = false;
-	if (y <= 40) life = false;
-	if (y >= 1040) life = false;
+	if (x >= 1470) life = false;
+	if (y <= 20) life = false;
+	if (y >= 1050) life = false;
 
 	sprite.setPosition(x, y);
 }

@@ -13,27 +13,27 @@ void Tank::control()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		state = left; speed = 0.1;
-		sprite.setTextureRect(sf::IntRect(0, 40, 40, 40));
+		state = left; speed = 0.12;
+		sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		state = right; speed = 0.1;
-		sprite.setTextureRect(sf::IntRect(0, 80, 40, 40));
+		state = right; speed = 0.12;
+		sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		state = up; speed = 0.1;
-		sprite.setTextureRect(sf::IntRect(0, 120, 40, 40));
+		state = up; speed = 0.12;
+		sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		state = down; speed = 0.1;
-		sprite.setTextureRect(sf::IntRect(0, 0, 40, 40));
+		state = down; speed = 0.12;
+		sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
 	}
 }
 
-void Tank::update(float time, std::vector<sf::String*> mapsArr)
+void Tank::update(float time, sf::String* level)
 {
 	control();
 	switch (state)
@@ -45,14 +45,14 @@ void Tank::update(float time, std::vector<sf::String*> mapsArr)
 	}
 
 	x += dx * time;
-	checkCollisionWithMap(dx, 0, mapsArr[1]);
+	checkCollisionWithMap(dx, 0, level);
 	y += dy * time;
-	checkCollisionWithMap(0, dy, mapsArr[1]);
+	checkCollisionWithMap(0, dy, level);
 
 	if (x <= 440) x = 440;
-	if (x >= 1440) x = 1440;
+	if (x >= 1420) x = 1420;
 	if (y <= 20) y = 20;
-	if (y >= 1020) y = 1020;
+	if (y >= 1000) y = 1000;
 
 	sprite.setPosition(x, y);
 	if (health <= 0)

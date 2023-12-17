@@ -149,7 +149,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
-	Tank p1(playerImage, 800, 990, 40, 40, "Player1");
+	Tank p1(playerImage, 800, 960, 60, 60, "Player1");
 
 	sf::Image bulletImage;
 	bulletImage.loadFromFile("image/bullet.png");
@@ -173,7 +173,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
-					entities.push_back(new Bullet(bulletImage, p1.x, p1.y, 8, 8, p1.state, "Bullet"));
+					entities.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
 				}
 				if (event.key.code == sf::Keyboard::Return)
 				{
@@ -185,7 +185,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 		for (it = entities.begin(); it != entities.end();)
 		{
 			Entity* b = *it;
-			b->update(time, mapsArr);
+			b->update(time, mapsArr[1]);
 			if (b->life == false)
 			{
 				it = entities.erase(it);
@@ -196,7 +196,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				it++;
 			}
 		}
-		p1.update(time, mapsArr);
+		p1.update(time, mapsArr[1]);
 		window.clear();
 		
 		window.draw(background);

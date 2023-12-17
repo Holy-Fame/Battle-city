@@ -11,6 +11,6 @@ public:
 	sf::String name;
 	Entity(sf::Image& image, float X, float Y, int W, int H, sf::String Name);
 	
-	virtual void update(float time, std::vector<sf::String*> mapsArr) = 0;
+	virtual void update(float time, sf::String* level) = 0;
 };
 

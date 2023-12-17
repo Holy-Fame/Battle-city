@@ -12,6 +12,6 @@ public:
 
 	void control();
 	void checkCollisionWithMap(float Dx, float Dy, sf::String* level);
-	void update(float time, std::vector<sf::String*> mapsArr);
+	void update(float time, sf::String* level);
 };
 
