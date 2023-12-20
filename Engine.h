@@ -9,6 +9,7 @@
 #include "Bullet.h"
 #include <vector>
 #include <list>
+#include "Enemy.h"
 
 class Engine
 {
@@ -25,5 +26,5 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
-	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr);
+	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots);
 };

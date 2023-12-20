@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Maps.h"
+#include <random>
 
 int printMap(sf::RenderWindow& window, sf::String* level)
 {
@@ -120,7 +121,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window, mapsArr);
+						SingleGame(window, mapsArr, botsFirstLevel);
 						break;
 					case 1:
 						continue;
@@ -141,10 +142,14 @@ void Engine::GameMenu()
 	}
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr)
+int getRandomNumber(int min, int max)
 {
+	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
+	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
+}
 
-
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots)
+{
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
 
@@ -152,15 +157,26 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
 	sf::Image playerImage;
-	playerImage.loadFromFile("image/enemy2.png");
+	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 960, 60, 60, "Player1");
+
+	sf::Image enemy1Image;
+	enemy1Image.loadFromFile("image/enemy1.png");
+	sf::Image enemy2Image;
+	enemy2Image.loadFromFile("image/enemy2.png");
+
+	std::list<Enemy*> enemies;
+	std::list<Enemy*>::iterator ite;
+	std::list<Enemy*>::iterator ite2;
 
 	sf::Image bulletImage;
 	bulletImage.loadFromFile("image/bullet.png");
 
 	std::list<Entity*> bullets;
-	std::list<Entity*>::iterator it;
-	std::list<Entity*>::iterator i2;
+	std::list<Entity*>::iterator itb;
+
+	float spawnTimer = 0;
+	enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 
 	sf::Clock clock;
 	while (window.isOpen()) {
@@ -186,30 +202,126 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			}
 		}
 
-		for (it = bullets.begin(); it != bullets.end();)
+		spawnTimer += time;
+		if (spawnTimer > 8000)
 		{
-			Entity* b = *it;
-			b->update(time, mapsArr[1]);
+			if (bots.size() != 0)
+			{
+				if (bots.back() == "Enemy1")
+				{
+					enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
+				}
+				else
+				{
+					enemies.push_back(new Enemy(enemy2Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy2"));
+				}
+				bots.pop_back();
+				spawnTimer = 0;
+			}
+		}
+
+		for (ite = enemies.begin(); ite != enemies.end(); ite++)
+		{
+			Enemy* e = *ite;
+			if (e->sprite.getGlobalBounds().intersects(p1.sprite.getGlobalBounds()))
+			{
+				if (e->dx > 0)
+				{
+					e->x = p1.x - e->w;
+					e->dx = 0;
+				}
+				if (e->dx < 0)
+				{
+					e->x = p1.x + e->w;
+					e->dx = 0;
+				}
+				if (e->dy > 0)
+				{
+					e->y = p1.y - e->h;
+					e->dy = 0;
+				}
+				if (e->dy < 0)
+				{
+					e->y = p1.y + e->h;
+					e->dy = 0;
+				}
+				if (p1.dx > 0)
+				{
+					p1.x = e->x - p1.w;
+				}
+				if (p1.dx < 0)
+				{
+					p1.x = e->x + e->w;
+				}
+				if (p1.dy > 0)
+				{
+					p1.y = e->y - p1.h;
+				}
+				if (p1.dy < 0)
+				{
+					p1.y = e->y + e->h;
+				}
+			}
+		}
+
+		for (itb = bullets.begin(); itb != bullets.end(); itb++)
+		{
+			for (ite = enemies.begin(); ite != enemies.end(); ite++)
+			{
+				Entity* b = *itb;
+				Enemy* e = *ite;
+				if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()))
+				{
+					b->life = false;
+					e->health -= 1;
+				}
+			}
+		}
+
+		for (itb = bullets.begin(); itb != bullets.end();)
+		{
+			Entity* b = *itb;
+			b->update(time, mapsArr[0]);
 			if (b->life == false)
 			{
-				it = bullets.erase(it);
+				itb = bullets.erase(itb);
 				delete b;
 			}
 			else
 			{
-				it++;
+				itb++;
 			}
 		}
-		p1.update(time, mapsArr[1]);
+		
+		for (ite = enemies.begin(); ite != enemies.end();)
+		{
+			Enemy* e = *ite;
+			e->update(time, mapsArr[0]);
+			if (e->life == false)
+			{
+				ite = enemies.erase(ite);
+				delete e;
+			}
+			else
+			{
+				ite++;
+			}
+		}
+
+		p1.update(time, mapsArr[0]);
 		window.clear();
 		
 		window.draw(background);
 
-		printMap(window, mapsArr[1]);
+		printMap(window, mapsArr[0]);
 
-		for (it = bullets.begin(); it != bullets.end(); it++)
+		for (itb = bullets.begin(); itb != bullets.end(); itb++)
 		{
-			window.draw((*it)->sprite);
+			window.draw((*itb)->sprite);
+		}
+		for (ite = enemies.begin(); ite != enemies.end(); ite++)
+		{
+			window.draw((*ite)->sprite);
 		}
 		window.draw(p1.sprite);
 		window.display();

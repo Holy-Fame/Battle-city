@@ -52,7 +52,7 @@ void Tank::update(float time, sf::String* level)
 	if (x <= 440) x = 440;
 	if (x >= 1420) x = 1420;
 	if (y <= 20) y = 20;
-	if (y >= 1000) y = 1000;
+	if (y >= 999) y = 999;
 
 	sprite.setPosition(x, y);
 	if (health <= 0)
