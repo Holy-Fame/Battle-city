@@ -178,6 +178,21 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	float spawnTimer = 0;
 	enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 
+	sf::Texture explosionTexture;
+	explosionTexture.loadFromFile("image/explosion.png");
+	std::vector<sf::IntRect> explosionFrames;
+	for (int i = 0; i < 5; ++i)
+	{
+		explosionFrames.push_back(sf::IntRect(i * 30, 0, 30, 30));
+	}
+
+	sf::Sprite explosionSprite;
+	explosionSprite.setTexture(explosionTexture);
+	explosionSprite.setScale(2.5f, 2.5f);
+
+	sf::Clock explosionClock;
+	bool isExplosion = false;
+
 	sf::Clock clock;
 	while (window.isOpen()) {
 
@@ -274,6 +289,13 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				{
 					b->life = false;
 					e->health -= 1;
+
+					if (e->health <= 0)
+					{
+						isExplosion = true;
+						explosionClock.restart();
+						explosionSprite.setPosition(e->x, e->y);
+					}
 				}
 			}
 		}
@@ -314,6 +336,21 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		window.draw(background);
 
 		printMap(window, mapsArr[0]);
+
+		if (isExplosion)
+		{
+			float elapsedSeconds = explosionClock.getElapsedTime().asSeconds();
+			if (elapsedSeconds > 0.4f)
+			{
+				isExplosion = false;
+			}
+			else
+			{
+				int currentFrame = static_cast<int>(elapsedSeconds / (0.4f / 5.0f));
+				explosionSprite.setTextureRect(explosionFrames[currentFrame]);
+				window.draw(explosionSprite);
+			}
+		}
 
 		for (itb = bullets.begin(); itb != bullets.end(); itb++)
 		{
