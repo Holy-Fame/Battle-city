@@ -156,6 +156,10 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
+	sf::Music startMusic;
+	startMusic.openFromFile("sound/stage_start.ogg");
+	startMusic.play();
+
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 960, 60, 60, "Player1");
@@ -193,9 +197,16 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::Clock explosionClock;
 	bool isExplosion = false;
 
+	sf::SoundBuffer shootBuffer;
+	shootBuffer.loadFromFile("sound/bullet_shot.ogg");
+	sf::Sound shoot(shootBuffer);
+
+	sf::SoundBuffer explosionBuffer;
+	explosionBuffer.loadFromFile("sound/explosion.ogg");
+	sf::Sound explosion(explosionBuffer);
+
 	sf::Clock clock;
 	while (window.isOpen()) {
-
 		float CurrentFrame = 0;
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
@@ -209,6 +220,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				if (event.key.code == sf::Keyboard::Space)
 				{
 					bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
+					shoot.play();
 				}
 				if (event.key.code == sf::Keyboard::Return)
 				{
@@ -295,6 +307,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 						isExplosion = true;
 						explosionClock.restart();
 						explosionSprite.setPosition(e->x, e->y);
+						explosion.play();
 					}
 				}
 			}
