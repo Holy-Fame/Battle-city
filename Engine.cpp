@@ -238,6 +238,13 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
+	sf::Image pauseImage;
+	pauseImage.loadFromFile("image/pause.png");
+	sf::Texture pauseTexture;
+	pauseTexture.loadFromImage(pauseImage);
+	sf::Sprite pauseSprite;
+	pauseSprite.setTexture(pauseTexture);
+
 	sf::Music startMusic;
 	startMusic.openFromFile("sound/stage_start.ogg");
 	startMusic.play();
@@ -290,6 +297,8 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	explosionBuffer.loadFromFile("sound/explosion.ogg");
 	sf::Sound explosion(explosionBuffer);
 
+	bool isPause = false;
+
 	sf::Clock clock;
 	while (window.isOpen()) {
 		float CurrentFrame = 0;
@@ -300,22 +309,32 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		sf::Event event;
 		while (window.pollEvent(event))
 		{	
-			if (event.type == sf::Event::KeyReleased)
+			if (isPause == false && event.key.code == sf::Keyboard::Escape)
+			{
+				isPause = true;
+			}
+
+			if (isPause == true && event.key.code == sf::Keyboard::Return)
+			{
+				isPause = false;
+			}
+
+			if (event.type == sf::Event::KeyReleased && isPause == false)
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
 					bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
 					shoot.play();
 				}
-				if (event.key.code == sf::Keyboard::Return)
-				{
-					exit(1);
-				}
 			}
 		}
 
-		spawnTimer += time;
-		if (spawnTimer > 8000)
+		if (isPause == false)
+		{
+			spawnTimer += time;
+		}
+
+		if (spawnTimer > 8000 && isPause == false)
 		{
 			if (bots.size() != 0)
 			{
@@ -398,37 +417,41 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			}
 		}
 
-		for (itb = bullets.begin(); itb != bullets.end();)
+		if (isPause == false)
 		{
-			Entity* b = *itb;
-			b->update(time, mapsArr[levelNumber]);
-			if (b->life == false)
+			for (itb = bullets.begin(); itb != bullets.end();)
 			{
-				itb = bullets.erase(itb);
-				delete b;
+				Entity* b = *itb;
+				b->update(time, mapsArr[levelNumber]);
+				if (b->life == false)
+				{
+					itb = bullets.erase(itb);
+					delete b;
+				}
+				else
+				{
+					itb++;
+				}
 			}
-			else
+
+			for (ite = enemies.begin(); ite != enemies.end();)
 			{
-				itb++;
+				Enemy* e = *ite;
+				e->update(time, mapsArr[levelNumber]);
+				if (e->life == false)
+				{
+					ite = enemies.erase(ite);
+					delete e;
+				}
+				else
+				{
+					ite++;
+				}
 			}
-		}
-		
-		for (ite = enemies.begin(); ite != enemies.end();)
-		{
-			Enemy* e = *ite;
-			e->update(time, mapsArr[levelNumber]);
-			if (e->life == false)
-			{
-				ite = enemies.erase(ite);
-				delete e;
-			}
-			else
-			{
-				ite++;
-			}
+
+			p1.update(time, mapsArr[levelNumber]);
 		}
 
-		p1.update(time, mapsArr[levelNumber]);
 		window.clear();
 		
 		window.draw(background);
@@ -461,6 +484,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			window.draw((*ite)->sprite);
 		}
 		window.draw(p1.sprite);
+
+		if (isPause)
+		{
+			window.draw(pauseSprite);
+		}
+
 		window.display();
 	}
 }

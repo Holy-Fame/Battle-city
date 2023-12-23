@@ -28,7 +28,7 @@ void Bullet::update(float time, sf::String* level)
 	if (x <= 440) life = false;
 	if (x >= 1470) life = false;
 	if (y <= 20) life = false;
-	if (y >= 1050) life = false;
+	if (y >= 1045) life = false;
 
 	sprite.setPosition(x, y);
 }
