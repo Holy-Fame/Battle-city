@@ -52,7 +52,7 @@ void printInterface(std::vector<Tank>& players, int enemysCount, sf::RenderWindo
 		window.draw(s_Interface);
 	}
 
-	for (int i = 0; i < enemysCount; ++i)
+	for (int i = 0; i < players.size(); ++i)
 	{
 		if (i == 0)
 		{
@@ -103,15 +103,15 @@ void printInterface(std::vector<Tank>& players, int enemysCount, sf::RenderWindo
 				window.draw(s_Interface);
 			}
 		}
-		if (level == 1)
+		if (level == 0)
 			s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
-		if (level == 2)
+		if (level == 1)
 			s_Interface.setTextureRect(sf::IntRect(0, 80, 40, 40));
-		if (level == 3)
+		if (level == 2)
 			s_Interface.setTextureRect(sf::IntRect(80, 80, 40, 40));
-		if (level == 4)
+		if (level == 3)
 			s_Interface.setTextureRect(sf::IntRect(120, 80, 40, 40));
-		if (level == 5)
+		if (level == 4)
 			s_Interface.setTextureRect(sf::IntRect(160, 40, 40, 40));
 	}
 	s_Interface.setPosition(1560, 900);
