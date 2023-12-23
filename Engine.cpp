@@ -3,6 +3,54 @@
 #include "Bots.h"
 #include <random>
 
+void NextLevelPicture(sf::RenderWindow& window, int level)
+{
+	sf::Image interfaceImage;
+	interfaceImage.loadFromFile("image/interface.png");
+	sf::Texture interface;
+	interface.loadFromImage(interfaceImage);
+	sf::Sprite s_Interface;
+	s_Interface.setTexture(interface);
+
+	sf::Image nextLevelImage;
+	nextLevelImage.loadFromFile("image/nextLevel.png");
+	sf::Texture nextLevel;
+	nextLevel.loadFromImage(nextLevelImage);
+	sf::Sprite s_nextLevel;
+	s_nextLevel.setTexture(nextLevel);
+	s_nextLevel.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
+
+	window.clear();
+	while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
+	{
+		window.draw(s_nextLevel);
+		switch (level) 
+		{
+		case (0) :
+			s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
+			break;
+		case (1):
+			s_Interface.setTextureRect(sf::IntRect(0, 80, 40, 40));
+			break;
+		case (2):
+			s_Interface.setTextureRect(sf::IntRect(80, 80, 40, 40));
+			break;
+		case (3):
+			s_Interface.setTextureRect(sf::IntRect(120, 80, 40, 40));
+			break;
+		case (4):
+			s_Interface.setTextureRect(sf::IntRect(160, 80, 40, 40));
+			break;
+		}
+		s_Interface.setPosition(1050, 450);
+		s_Interface.setScale(2, 2);
+		window.draw(s_Interface);
+		window.display();
+	}
+	
+	return;
+}
+
 int printMap(sf::RenderWindow& window, sf::String* level)
 {
 	sf::Image mapImage;
@@ -239,10 +287,6 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
-	sf::Music startMusic;
-	startMusic.openFromFile("sound/stage_start.ogg");
-	startMusic.play();
-
 	std::vector<Tank> players;
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
@@ -291,11 +335,19 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	explosionBuffer.loadFromFile("sound/explosion.ogg");
 	sf::Sound explosion(explosionBuffer);
 
+	sf::Music startMusic;
+	startMusic.openFromFile("sound/stage_start.ogg");
+
 	sf::Clock clock;
 	
 	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
 	{
 		int botsCount = 10;
+		NextLevelPicture(window, levelNumber);
+		if (levelNumber == 0)
+		{
+			startMusic.play();
+		}
 		while (window.isOpen()) {
 			float CurrentFrame = 0;
 			float time = clock.getElapsedTime().asMicroseconds();
@@ -312,7 +364,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 						bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
 						shoot.play();
 					}
-					if (event.key.code == sf::Keyboard::Return)
+					if (event.key.code == sf::Keyboard::O)
 					{
 						exit(1);
 					}
@@ -403,22 +455,6 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				}
 			}
 
-			for (itb = bullets.begin(); itb != bullets.end();)
-			{
-				Entity* b = *itb;
-				b->update(time, mapsArr[levelNumber]);
-				if (b->life == false)
-				{
-					itb = bullets.erase(itb);
-					delete b;
-				}
-				else
-				{
-					itb++;
-				}
-			}
-
-
 			for (ite = enemies.begin(); ite != enemies.end();)
 			{
 				Enemy* e = *ite;
@@ -443,22 +479,6 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 
 			printMap(window, mapsArr[levelNumber]);
 
-
-			printInterface(players, bots[levelNumber].size(), window, levelNumber);
-			if (botsCount == 0)
-			{
-				for (itb = bullets.begin(); itb != bullets.end(); itb++)
-				{
-					Entity* b = *itb;
-					b->life = false;
-				}
-				p1.x = 800;
-				p1.y = 980;
-				p1.sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
-				window.draw(p1.sprite);
-				break;
-			}
-
 			if (isExplosion)
 			{
 				float elapsedSeconds = explosionClock.getElapsedTime().asSeconds();
@@ -474,6 +494,31 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				}
 			}
 
+			printInterface(players, bots[levelNumber].size(), window, levelNumber);
+			if (botsCount == 0)
+			{
+				p1.x = 800;
+				p1.y = 980;
+				p1.sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+				window.draw(p1.sprite);
+				break;
+			}
+
+			for (itb = bullets.begin(); itb != bullets.end();)
+			{
+				Entity* b = *itb;
+				b->update(time, mapsArr[levelNumber]);
+				if (b->life == false)
+				{
+					itb = bullets.erase(itb);
+					delete b;
+				}
+				else
+				{
+					itb++;
+				}
+			}
+
 			for (itb = bullets.begin(); itb != bullets.end(); itb++)
 			{
 				window.draw((*itb)->sprite);
@@ -485,8 +530,9 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			}
 			window.draw(p1.sprite);
 			window.display();
-		}		
+		}	
 
 		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
 }
+

@@ -28,7 +28,7 @@ void Bullet::update(float time, sf::String* level)
 	if (x <= 440) life = false;
 	if (x >= 1470) life = false;
 	if (y <= 20) life = false;
-	if (y >= 1050) life = false;
+	if (y >= 1045) life = false;
 
 	sprite.setPosition(x, y);
 }
@@ -39,7 +39,11 @@ void Bullet::checkCollisionWithMap(float Dx, float Dy, sf::String* level)
 	{
 		for (int j = (x - 440) / 40; j < (x - 440 + w) / 40; j++)
 		{
-     		if (level[i][j] == '#' || level[i][j] == 'w' || level[i][j] == '_' || level[i][j] == '-' || level[i][j] == '(' || level[i][j] == ')')
+			if (i > 26 || i < 0 || j > 26 || j < 0)
+			{
+				life = false;
+			}
+     		else if (level[i][j] == '#' || level[i][j] == 'w' || level[i][j] == '_' || level[i][j] == '-' || level[i][j] == '(' || level[i][j] == ')')
 			{
 				if (Dy > 0)
 				{
