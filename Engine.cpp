@@ -450,7 +450,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			}
 		}
 
-		printInterface(players, enemies.size(), window, levelNumber);
+		printInterface(players, bots.size(), window, levelNumber);
 
 		for (itb = bullets.begin(); itb != bullets.end(); itb++)
 		{
