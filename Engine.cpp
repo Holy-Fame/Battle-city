@@ -160,9 +160,11 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	startMusic.openFromFile("sound/stage_start.ogg");
 	startMusic.play();
 
+	std::vector<Tank> players;
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
+	players.push_back(p1);
 
 	sf::Image enemy1Image;
 	enemy1Image.loadFromFile("image/enemy1.png");
