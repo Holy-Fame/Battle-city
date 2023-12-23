@@ -2,10 +2,10 @@
 
 Tank::Tank(sf::Image& image, float X, float Y, int W, int H, sf::String Name) : Entity(image, X, Y, W, H, Name)
 {
-	playerScore = 0; state = down;
+	playerScore = 0; state = up;
 	if (name == "Player1")
 	{
-		sprite.setTextureRect(sf::IntRect(0, 0, w, h));
+		sprite.setTextureRect(sf::IntRect(0, 180, w, h));
 	}
 }
 

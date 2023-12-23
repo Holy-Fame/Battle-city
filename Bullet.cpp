@@ -39,7 +39,7 @@ void Bullet::checkCollisionWithMap(float Dx, float Dy, sf::String* level)
 	{
 		for (int j = (x - 440) / 40; j < (x - 440 + w) / 40; j++)
 		{
-  			if (level[i][j] == '#' || level[i][j] == 'w' || level[i][j] == '_' || level[i][j] == '-' || level[i][j] == '(' || level[i][j] == ')')
+     		if (level[i][j] == '#' || level[i][j] == 'w' || level[i][j] == '_' || level[i][j] == '-' || level[i][j] == '(' || level[i][j] == ')')
 			{
 				if (Dy > 0)
 				{

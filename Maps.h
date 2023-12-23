@@ -35,11 +35,6 @@ sf::String firstLevelMap[MAP_HIGHT] =
 	"           #er#           ",
 };
 
-std::vector<std::string> botsFirstLevel =
-{
-	"Enemy2", "Enemy2", "Enemy1", "Enemy1", "Enemy1", "Enemy1", "Enemy1", "Enemy1", "Enemy1"
-};
-
 sf::String secondLevelMap[MAP_HIGHT] =
 {
 	"                          ",

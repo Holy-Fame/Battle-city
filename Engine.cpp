@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Maps.h"
+#include "Bots.h"
 #include <random>
 
 int printMap(sf::RenderWindow& window, sf::String* level)
@@ -203,7 +204,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window, mapsArr, botsFirstLevel, 0);
+						SingleGame(window, mapsArr, bots);
 						break;
 					case 1:
 						continue;
@@ -230,7 +231,7 @@ int getRandomNumber(int min, int max)
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots, int levelNumber)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::vector<std::string>>& bots)
 {
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -291,176 +292,201 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::Sound explosion(explosionBuffer);
 
 	sf::Clock clock;
-	while (window.isOpen()) {
-		float CurrentFrame = 0;
-		float time = clock.getElapsedTime().asMicroseconds();
-		clock.restart();
-		time = time / 800;
+	
+	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
+	{
+		int botsCount = 10;
+		while (window.isOpen()) {
+			float CurrentFrame = 0;
+			float time = clock.getElapsedTime().asMicroseconds();
+			clock.restart();
+			time = time / 800;
 
-		sf::Event event;
-		while (window.pollEvent(event))
-		{	
-			if (event.type == sf::Event::KeyReleased)
+			sf::Event event;
+			while (window.pollEvent(event))
 			{
-				if (event.key.code == sf::Keyboard::Space)
+				if (event.type == sf::Event::KeyReleased)
 				{
-					bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
-					shoot.play();
-				}
-				if (event.key.code == sf::Keyboard::Return)
-				{
-					exit(1);
-				}
-			}
-		}
-
-		spawnTimer += time;
-		if (spawnTimer > 8000)
-		{
-			if (bots.size() != 0)
-			{
-				if (bots.back() == "Enemy1")
-				{
-					enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
-				}
-				else
-				{
-					enemies.push_back(new Enemy(enemy2Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy2"));
-				}
-				bots.pop_back();
-				spawnTimer = 0;
-			}
-		}
-
-		for (ite = enemies.begin(); ite != enemies.end(); ite++)
-		{
-			Enemy* e = *ite;
-			if (e->sprite.getGlobalBounds().intersects(p1.sprite.getGlobalBounds()))
-			{
-				if (e->dx > 0)
-				{
-					e->x = p1.x - e->w;
-					e->dx = 0;
-				}
-				if (e->dx < 0)
-				{
-					e->x = p1.x + e->w;
-					e->dx = 0;
-				}
-				if (e->dy > 0)
-				{
-					e->y = p1.y - e->h;
-					e->dy = 0;
-				}
-				if (e->dy < 0)
-				{
-					e->y = p1.y + e->h;
-					e->dy = 0;
-				}
-				if (p1.dx > 0)
-				{
-					p1.x = e->x - p1.w;
-				}
-				if (p1.dx < 0)
-				{
-					p1.x = e->x + e->w;
-				}
-				if (p1.dy > 0)
-				{
-					p1.y = e->y - p1.h;
-				}
-				if (p1.dy < 0)
-				{
-					p1.y = e->y + e->h;
-				}
-			}
-		}
-
-		for (itb = bullets.begin(); itb != bullets.end(); itb++)
-		{
-			for (ite = enemies.begin(); ite != enemies.end(); ite++)
-			{
-				Entity* b = *itb;
-				Enemy* e = *ite;
-				if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()))
-				{
-					b->life = false;
-					e->health -= 1;
-
-					if (e->health <= 0)
+					if (event.key.code == sf::Keyboard::Space)
 					{
-						isExplosion = true;
-						explosionClock.restart();
-						explosionSprite.setPosition(e->x, e->y);
-						explosion.play();
+						bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
+						shoot.play();
+					}
+					if (event.key.code == sf::Keyboard::Return)
+					{
+						exit(1);
 					}
 				}
 			}
-		}
 
-		for (itb = bullets.begin(); itb != bullets.end();)
-		{
-			Entity* b = *itb;
-			b->update(time, mapsArr[levelNumber]);
-			if (b->life == false)
+			spawnTimer += time;
+			if (spawnTimer > 1000)
 			{
-				itb = bullets.erase(itb);
-				delete b;
+				if (bots[levelNumber].size() != 0)
+				{
+					if (bots[levelNumber].back() == "Enemy1")
+					{
+						enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
+					}
+					else
+					{
+						enemies.push_back(new Enemy(enemy2Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy2"));
+					}
+					bots[levelNumber].pop_back();
+					spawnTimer = 0;
+				}
 			}
-			else
-			{
-				itb++;
-			}
-		}
-		
-		for (ite = enemies.begin(); ite != enemies.end();)
-		{
-			Enemy* e = *ite;
-			e->update(time, mapsArr[levelNumber]);
-			if (e->life == false)
-			{
-				ite = enemies.erase(ite);
-				delete e;
-			}
-			else
-			{
-				ite++;
-			}
-		}
 
-		p1.update(time, mapsArr[levelNumber]);
-		window.clear();
-		
-		window.draw(background);
-
-		printMap(window, mapsArr[levelNumber]);
-
-		if (isExplosion)
-		{
-			float elapsedSeconds = explosionClock.getElapsedTime().asSeconds();
-			if (elapsedSeconds > 0.4f)
+			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
-				isExplosion = false;
+				Enemy* e = *ite;
+				if (e->sprite.getGlobalBounds().intersects(p1.sprite.getGlobalBounds()))
+				{
+					if (e->dx > 0)
+					{
+						e->x = p1.x - e->w;
+						e->dx = 0;
+					}
+					if (e->dx < 0)
+					{
+						e->x = p1.x + e->w;
+						e->dx = 0;
+					}
+					if (e->dy > 0)
+					{
+						e->y = p1.y - e->h;
+						e->dy = 0;
+					}
+					if (e->dy < 0)
+					{
+						e->y = p1.y + e->h;
+						e->dy = 0;
+					}
+					if (p1.dx > 0)
+					{
+						p1.x = e->x - p1.w;
+					}
+					if (p1.dx < 0)
+					{
+						p1.x = e->x + e->w;
+					}
+					if (p1.dy > 0)
+					{
+						p1.y = e->y - p1.h;
+					}
+					if (p1.dy < 0)
+					{
+						p1.y = e->y + e->h;
+					}
+				}
 			}
-			else
+
+			for (itb = bullets.begin(); itb != bullets.end(); itb++)
 			{
-				int currentFrame = static_cast<int>(elapsedSeconds / (0.4f / 5.0f));
-				explosionSprite.setTextureRect(explosionFrames[currentFrame]);
-				window.draw(explosionSprite);
+				for (ite = enemies.begin(); ite != enemies.end(); ite++)
+				{
+					Entity* b = *itb;
+					Enemy* e = *ite;
+					if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()))
+					{
+						b->life = false;
+						e->health -= 1;
+
+						if (e->health <= 0)
+						{
+							isExplosion = true;
+							explosionClock.restart();
+							explosionSprite.setPosition(e->x, e->y);
+							explosion.play();
+						}
+					}
+				}
 			}
-		}
 
-		printInterface(players, bots.size(), window, levelNumber);
+			for (itb = bullets.begin(); itb != bullets.end();)
+			{
+				Entity* b = *itb;
+				b->update(time, mapsArr[levelNumber]);
+				if (b->life == false)
+				{
+					itb = bullets.erase(itb);
+					delete b;
+				}
+				else
+				{
+					itb++;
+				}
+			}
 
-		for (itb = bullets.begin(); itb != bullets.end(); itb++)
-		{
-			window.draw((*itb)->sprite);
-		}
-		for (ite = enemies.begin(); ite != enemies.end(); ite++)
-		{
-			window.draw((*ite)->sprite);
-		}
-		window.draw(p1.sprite);
-		window.display();
+
+			for (ite = enemies.begin(); ite != enemies.end();)
+			{
+				Enemy* e = *ite;
+				e->update(time, mapsArr[levelNumber]);
+
+				if (e->life == false)
+				{
+					ite = enemies.erase(ite);
+					delete e;
+					--botsCount;
+				}
+				else
+				{
+					ite++;
+				}
+			}
+			
+			p1.update(time, mapsArr[levelNumber]);
+			window.clear();
+
+			window.draw(background);
+
+			printMap(window, mapsArr[levelNumber]);
+
+
+			printInterface(players, bots[levelNumber].size(), window, levelNumber);
+			if (botsCount == 0)
+			{
+				for (itb = bullets.begin(); itb != bullets.end(); itb++)
+				{
+					Entity* b = *itb;
+					b->life = false;
+				}
+				p1.x = 800;
+				p1.y = 980;
+				p1.sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+				window.draw(p1.sprite);
+				break;
+			}
+
+			if (isExplosion)
+			{
+				float elapsedSeconds = explosionClock.getElapsedTime().asSeconds();
+				if (elapsedSeconds > 0.4f)
+				{
+					isExplosion = false;
+				}
+				else
+				{
+					int currentFrame = static_cast<int>(elapsedSeconds / (0.4f / 5.0f));
+					explosionSprite.setTextureRect(explosionFrames[currentFrame]);
+					window.draw(explosionSprite);
+				}
+			}
+
+			for (itb = bullets.begin(); itb != bullets.end(); itb++)
+			{
+				window.draw((*itb)->sprite);
+			}
+
+			for (ite = enemies.begin(); ite != enemies.end(); ite++)
+			{
+				window.draw((*ite)->sprite);
+			}
+			window.draw(p1.sprite);
+			window.display();
+		}		
+
+		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
 }
