@@ -121,7 +121,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window, mapsArr, botsFirstLevel);
+						SingleGame(window, mapsArr, botsFirstLevel, 0);
 						break;
 					case 1:
 						continue;
@@ -148,7 +148,7 @@ int getRandomNumber(int min, int max)
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots, int levelNumber)
 {
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -162,7 +162,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
-	Tank p1(playerImage, 800, 960, 60, 60, "Player1");
+	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
 
 	sf::Image enemy1Image;
 	enemy1Image.loadFromFile("image/enemy1.png");
@@ -189,6 +189,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	{
 		explosionFrames.push_back(sf::IntRect(i * 30, 0, 30, 30));
 	}
+
 
 	sf::Sprite explosionSprite;
 	explosionSprite.setTexture(explosionTexture);
@@ -316,7 +317,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		for (itb = bullets.begin(); itb != bullets.end();)
 		{
 			Entity* b = *itb;
-			b->update(time, mapsArr[0]);
+			b->update(time, mapsArr[levelNumber]);
 			if (b->life == false)
 			{
 				itb = bullets.erase(itb);
@@ -331,7 +332,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		for (ite = enemies.begin(); ite != enemies.end();)
 		{
 			Enemy* e = *ite;
-			e->update(time, mapsArr[0]);
+			e->update(time, mapsArr[levelNumber]);
 			if (e->life == false)
 			{
 				ite = enemies.erase(ite);
@@ -343,12 +344,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			}
 		}
 
-		p1.update(time, mapsArr[0]);
+		p1.update(time, mapsArr[levelNumber]);
 		window.clear();
 		
 		window.draw(background);
 
-		printMap(window, mapsArr[0]);
+		printMap(window, mapsArr[levelNumber]);
 
 		if (isExplosion)
 		{

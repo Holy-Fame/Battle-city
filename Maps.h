@@ -42,8 +42,8 @@ std::vector<std::string> botsFirstLevel =
 
 sf::String secondLevelMap[MAP_HIGHT] =
 {
-	"      ww      ww          ",
-	"      ww      ww          ",
+	"                          ",
+	"                          ",
 	"  ##  ww      ##  ##  ##  ",
 	"  ##  ww      ##  ##  ##  ",
 	"  ##        ####  ##ww##  ",
@@ -72,7 +72,7 @@ sf::String secondLevelMap[MAP_HIGHT] =
 
 sf::String thirdLevelMap[MAP_HIGHT] =
 {
-	"              wwww        ",
+	"                          ",
 	"                          ",
 	"    wwwwwwww        ww    ",
 	"    ww              ww    ",
@@ -103,7 +103,7 @@ sf::String thirdLevelMap[MAP_HIGHT] =
 sf::String fourthLevelMap[MAP_HIGHT] =
 {
 	"                          ",
-	"      ######    ##        ",
+	"                          ",
 	"    ################      ",
 	"  ##################      ",
 	"                  ####    ",
@@ -132,8 +132,8 @@ sf::String fourthLevelMap[MAP_HIGHT] =
 
 sf::String fifthLevelMap[MAP_HIGHT] =
 {
-	"  ##  ##  ##  ##  ##  ##  ",
-	"  ##  ##  ##  ##  ##  ##  ",
+	"                          ",
+	"                          ",
 	"  ##  ##  ##  ##  ##  ##  ",
 	"  ##  ##  ##  ##  ##  ##  ",
 	"  ww  ww  ww  ww  ww  ww  ",
