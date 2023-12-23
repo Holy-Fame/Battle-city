@@ -35,6 +35,88 @@ int printMap(sf::RenderWindow& window, sf::String* level)
 	return 0;
 }
 
+void printInterface(std::vector<Tank>& players, int enemysCount, sf::RenderWindow& window, int level)
+{
+	sf::Image interfaceImage;
+	interfaceImage.loadFromFile("image/interface.png");
+	sf::Texture interface;
+	interface.loadFromImage(interfaceImage);
+	sf::Sprite s_Interface;
+	s_Interface.setTexture(interface);
+
+	for (int i = 0; i < 20/*enemysCount*/; ++i)
+	{
+		s_Interface.setTextureRect(sf::IntRect(0, 0, 40, 40));
+		s_Interface.setPosition( i % 2 * 40 + 1520, i / 2 * 40 + 20);
+		window.draw(s_Interface);
+	}
+
+	for (int i = 0; i < 2/*enemysCount*/; ++i)
+	{
+		if (i == 0)
+		{
+			s_Interface.setTextureRect(sf::IntRect(40, 0, 80, 80));
+			s_Interface.setPosition(i + 1520, i + 540);
+			window.draw(s_Interface);
+			if (/*players[i].health*/false)
+			{
+				s_Interface.setTextureRect(sf::IntRect(80, 80, 40, 40));
+				s_Interface.setPosition(1560, 580);
+				window.draw(s_Interface);
+			}
+			else if (/*players[i].health*/false)
+			{
+				s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
+				s_Interface.setPosition(1560, 580);
+				window.draw(s_Interface);
+			}
+			if (/*players[i].health*/true)
+			{
+				s_Interface.setTextureRect(sf::IntRect(40, 80, 40, 40));
+				s_Interface.setPosition(1560, 580);
+				window.draw(s_Interface);
+			}
+
+		}
+		if (i == 1)
+		{
+			s_Interface.setTextureRect(sf::IntRect(120, 0, 80, 80));
+			s_Interface.setPosition(i + 1520, i * 100 + 540);
+			window.draw(s_Interface);
+			if (/*players[i].health*/false)
+			{
+				s_Interface.setTextureRect(sf::IntRect(80, 80, 40, 40));
+				s_Interface.setPosition(1560, 680);
+				window.draw(s_Interface);
+			}
+			else if (/*players[i].health*/false)
+			{
+				s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
+				s_Interface.setPosition(1560, 680);
+				window.draw(s_Interface);
+			}
+			if (/*players[i].health*/true)
+			{
+				s_Interface.setTextureRect(sf::IntRect(40, 80, 40, 40));
+				s_Interface.setPosition(1560, 680);
+				window.draw(s_Interface);
+			}
+		}
+		if (level == 1)
+			s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
+		if (level == 2)
+			s_Interface.setTextureRect(sf::IntRect(0, 80, 40, 40));
+		if (level == 3)
+			s_Interface.setTextureRect(sf::IntRect(80, 80, 40, 40));
+		if (level == 4)
+			s_Interface.setTextureRect(sf::IntRect(120, 80, 40, 40));
+		if (level == 5)
+			s_Interface.setTextureRect(sf::IntRect(160, 40, 40, 40));
+	}
+	s_Interface.setPosition(1560, 900);
+	window.draw(s_Interface);
+}
+
 void Engine::input()
 {
 	sf::Event event_play;
@@ -143,8 +225,6 @@ void Engine::GameMenu()
 
 void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr)
 {
-
-
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
 
@@ -204,6 +284,9 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		window.clear();
 		
 		window.draw(background);
+
+		std::vector<Tank> pleayers;
+		printInterface(pleayers, /*enemy.size()*/5, window, /*level*/ 1);
 
 		printMap(window, mapsArr[1]);
 
