@@ -29,7 +29,7 @@ void Enemy::control(float time, std::list<Entity*>& bullets)
 	changeDirectionTimer += time;
 	shootTimer += time;
 
-	if (shootTimer > 2000)
+	if (shootTimer > 500)
 	{
 		sf::Image bulletImage;
 		bulletImage.loadFromFile("image/bullet.png");
@@ -37,7 +37,7 @@ void Enemy::control(float time, std::list<Entity*>& bullets)
 		shootTimer = 0;
 	}
 
-	if (changeDirectionTimer > 3000)
+	if (changeDirectionTimer > 1700)
 	{
 		int randNum = getRandom(0, 3);
 		switch (randNum)
