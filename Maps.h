@@ -155,4 +155,4 @@ sf::String fifthLevelMap[MAP_HIGHT] =
 	"           #er#           ",
 };
 
-std::vector<sf::String* > mapsArr{ firstLevelMap, secondLevelMap, thirdLevelMap, fourthLevelMap, fifthLevelMap };
+std::vector<sf::String*> mapsArr{ firstLevelMap, secondLevelMap, thirdLevelMap, fourthLevelMap, fifthLevelMap };

@@ -404,6 +404,11 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 	{
 		int botsCount = 10;
 		NextLevelPicture(window, levelNumber);
+		sf::String map[MAP_HIGHT];
+		for (int i = 0; i < 26; ++i)
+		{
+			map[i] = mapsArr[levelNumber][i];
+		}
 		if (levelNumber == 0)
 		{
 			startMusic.play();
@@ -518,7 +523,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			for (ite = enemies.begin(); ite != enemies.end();)
 			{
 				Enemy* e = *ite;
-				e->update(time, mapsArr[levelNumber]);
+				e->update(time, map);
 
 				if (e->life == false)
 				{
@@ -533,12 +538,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
-			players[0].update(time, mapsArr[levelNumber]);
+			players[0].update(time, map);
 			window.clear();
 
 			window.draw(background);
 
-			printMap(window, mapsArr[levelNumber]);
+			printMap(window, map);
 
 			if (isExplosion)
 			{
@@ -573,7 +578,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			for (itb = bullets.begin(); itb != bullets.end();)
 			{
 				Entity* b = *itb;
-				b->update(time, mapsArr[levelNumber]);
+				b->update(time, map);
 				if (b->life == false)
 				{
 					itb = bullets.erase(itb);
