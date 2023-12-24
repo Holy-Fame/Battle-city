@@ -15,7 +15,7 @@ void printTableScore(std::vector<Tank>& players, sf::RenderWindow& window)
 	sf::Image ScoreImage;
 
 	if (players.size() == 1)
-	{	
+	{
 		ScoreImage.loadFromFile("image/tableScore1.png");
 	}
 	else
@@ -38,7 +38,7 @@ void printTableScore(std::vector<Tank>& players, sf::RenderWindow& window)
 		window.draw(s_Score);
 		if (players.size() == 1)
 		{
- 			
+
 			txt.setString(std::to_string(players[0].playerScore));
 			txt.setFillColor(sf::Color::Black);
 			txt.setPosition(1100, 270);
@@ -84,9 +84,9 @@ void NextLevelPicture(sf::RenderWindow& window, int level)
 	while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Enter))
 	{
 		window.draw(s_nextLevel);
-		switch (level) 
+		switch (level)
 		{
-		case (0) :
+		case (0):
 			s_Interface.setTextureRect(sf::IntRect(0, 40, 40, 40));
 			break;
 		case (1):
@@ -107,7 +107,7 @@ void NextLevelPicture(sf::RenderWindow& window, int level)
 		window.draw(s_Interface);
 		window.display();
 	}
-	
+
 	return;
 }
 
@@ -157,7 +157,7 @@ void printInterface(std::vector<Tank>& players, int enemysCount, sf::RenderWindo
 	for (int i = 0; i < enemysCount; ++i)
 	{
 		s_Interface.setTextureRect(sf::IntRect(0, 0, 40, 40));
-		s_Interface.setPosition( i % 2 * 40 + 1520, i / 2 * 40 + 20);
+		s_Interface.setPosition(i % 2 * 40 + 1520, i / 2 * 40 + 20);
 		window.draw(s_Interface);
 	}
 
@@ -346,8 +346,14 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
-	std::vector<Tank> players;
-  
+
+	sf::Image pauseImage;
+	pauseImage.loadFromFile("image/pause.png");
+	sf::Texture pauseTexture;
+	pauseTexture.loadFromImage(pauseImage);
+	sf::Sprite pauseSprite;
+	pauseSprite.setTexture(pauseTexture);
+
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
@@ -399,8 +405,10 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 	sf::Music startMusic;
 	startMusic.openFromFile("sound/stage_start.ogg");
 
+	bool isPause = false;
+
 	sf::Clock clock;
-	
+
 	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
 	{
 		int botsCount = 10;
@@ -423,7 +431,17 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			sf::Event event;
 			while (window.pollEvent(event))
 			{
-				if (event.type == sf::Event::KeyReleased)
+				if (isPause == false && event.key.code == sf::Keyboard::Escape)
+				{
+					isPause = true;
+				}
+
+				if (isPause == true && event.key.code == sf::Keyboard::Return)
+				{
+					isPause = false;
+				}
+
+				if (event.type == sf::Event::KeyReleased && isPause == false)
 				{
 					if (event.key.code == sf::Keyboard::Space)
 					{
@@ -437,9 +455,17 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
+			if (isPause == false)
+			{
+				spawnTimer += time;
+			}
 
-			spawnTimer += time;
-			if (spawnTimer > 1000)
+			if (enemies.size() >= 4)
+			{
+				spawnTimer = 0;
+			}
+
+			if (spawnTimer > 8000 && isPause == false)
 			{
 				if (bots[levelNumber].size() != 0)
 				{
@@ -502,11 +528,27 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 			for (itb = bullets.begin(); itb != bullets.end(); itb++)
 			{
+				Entity* b = *itb;
+				if (b->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()) && b->name == "BulletEnemy")
+				{
+					b->life = false;
+					players[0].health -= 1;
+					players[0].x = 800;
+					players[0].y = 980;
+
+					if (players[0].health <= 0)
+					{
+						isExplosion = true;
+						explosionClock.restart();
+						explosionSprite.setPosition(players[0].x, players[0].y);
+						explosion.play();
+					}
+				}
 				for (ite = enemies.begin(); ite != enemies.end(); ite++)
 				{
 					Entity* b = *itb;
 					Enemy* e = *ite;
-					if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()))
+					if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()) && b->name == "Bullet")
 					{
 						b->life = false;
 						e->health -= 1;
@@ -522,25 +564,29 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
-			for (ite = enemies.begin(); ite != enemies.end();)
+			if (isPause == false)
 			{
-				Enemy* e = *ite;
-				e->update(time, map);
+				for (ite = enemies.begin(); ite != enemies.end();)
+				{
+					Enemy* e = *ite;
+					e->update(time, map, bullets);
 
-				if (e->life == false)
-				{
-					players[0].playerScore += e->name == "Enemy1" ? 100 : 200;
-					ite = enemies.erase(ite);
-					delete e;
-					--botsCount;
+					if (e->life == false)
+					{
+						players[0].playerScore += e->name == "Enemy1" ? 100 : 200;
+						ite = enemies.erase(ite);
+						delete e;
+						--botsCount;
+					}
+					else
+					{
+						ite++;
+					}
 				}
-				else
-				{
-					ite++;
-				}
+
+				players[0].update(time, map);
 			}
 
-			players[0].update(time, map);
 			window.clear();
 
 			window.draw(background);
@@ -576,19 +622,22 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				window.draw(players[0].sprite);
 				break;
 			}
-      
-			for (itb = bullets.begin(); itb != bullets.end();)
+
+			if (isPause == false)
 			{
-				Entity* b = *itb;
-				b->update(time, map);
-				if (b->life == false)
+				for (itb = bullets.begin(); itb != bullets.end();)
 				{
-					itb = bullets.erase(itb);
-					delete b;
-				}
-				else
-				{
-					itb++;
+					Entity* b = *itb;
+					b->update(time, map);
+					if (b->life == false)
+					{
+						itb = bullets.erase(itb);
+						delete b;
+					}
+					else
+					{
+						itb++;
+					}
 				}
 			}
 
@@ -597,12 +646,18 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				window.draw((*itb)->sprite);
 			}
 
-     
+
 			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
 				window.draw((*ite)->sprite);
 			}
 			window.draw(players[0].sprite);
+
+			if (isPause)
+			{
+				window.draw(pauseSprite);
+			}
+
 			window.display();
 		}
 

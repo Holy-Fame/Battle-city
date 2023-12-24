@@ -70,6 +70,10 @@ void Tank::checkCollisionWithMap(float Dx, float Dy, sf::String* level)
 	{
 		for (int j = (x - 440) / 40; j < (x - 440 + w) / 40; j++)
 		{
+			if (i > 26 || i < 0 || j > 26 || j < 0)
+			{
+				break;
+			}
 			if (level[i][j] == '#' || level[i][j] == 'w' || level[i][j] == '_' || level[i][j] == '-' || level[i][j] == '(' || level[i][j] == ')')
 			{
 				if (Dy > 0)
