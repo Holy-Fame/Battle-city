@@ -632,6 +632,15 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			{
 				return GameOver(players, window);
 			}
+			for (itb = bullets.begin(); itb != bullets.end();)
+			{
+				Entity* b = *itb;
+    			if (b->x > 925 && b->x < 995 && b->y>1000 && b->y < 1060)
+				{
+					return GameOver(players, window);
+				}
+				itb++;
+			}
 
 			if (isPause == false)
 			{
