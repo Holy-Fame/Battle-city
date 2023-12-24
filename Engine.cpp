@@ -711,6 +711,20 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				break;
 			}
 
+			if (players[0].health <= 0)
+			{
+				return GameOver(players, window);
+			}
+			for (itb = bullets.begin(); itb != bullets.end();)
+			{
+				Entity* b = *itb;
+    			if (b->x > 925 && b->x < 995 && b->y>1000 && b->y < 1060)
+				{
+					return GameOver(players, window);
+				}
+				itb++;
+			}
+
 			if (isPause == false)
 			{
 				for (itb = bullets.begin(); itb != bullets.end();)
@@ -755,6 +769,34 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
+	printTableScore(players, window);
+	return false;
+}
+
+bool Engine::GameOver(std::vector<Tank>& players, sf::RenderWindow& window)
+{
+	sf::Image gameOverImage;
+	gameOverImage.loadFromFile("image/gameOver.png");
+	sf::Texture gameOverTexture;
+	gameOverTexture.loadFromImage(gameOverImage);
+	sf::Sprite gameOverSprite;
+	gameOverSprite.setTexture(gameOverTexture);
+	gameOverSprite.setPosition(836, 1080);
+
+	float speed = 0.5f;
+	while (!sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace))
+	{
+		float deltaTime = 0.1f;
+		gameOverSprite.move(0, -speed * deltaTime);
+		if (gameOverSprite.getPosition().y < window.getSize().y / 2 - gameOverSprite.getLocalBounds().height / 2)
+		{
+			gameOverSprite.setPosition(gameOverSprite.getPosition().x, window.getSize().y / 2 - gameOverSprite.getLocalBounds().height / 2);
+		}
+		window.clear();
+		window.draw(gameOverSprite);
+		window.display();
+	}
+
 	printTableScore(players, window);
 	return false;
 }
