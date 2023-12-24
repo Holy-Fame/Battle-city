@@ -27,5 +27,5 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
-	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::string> bots, int levelNumber);
+	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots);
 };
