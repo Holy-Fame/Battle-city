@@ -46,12 +46,12 @@ Battle City состоит из 5 различных этапов. Каждая 
     - Space - выстрел
 ## 🖼️ Скриншоты
   #### Главное меню
-  ![Главное меню](https://github.com/Holy-Fame/Battle-city/blob/README.md/screen/MainMenu.PNG)
+  ![Главное меню](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/MainMenu.PNG)
   #### Первый уровень 
-  ![Первый уровень](https://github.com/Holy-Fame/Battle-city/blob/README.md/screen/FirstLevel.PNG)
+  ![Первый уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/FirstLevel.PNG)
   #### Второй уровень
-   ![Второй уровень](https://github.com/Holy-Fame/Battle-city/blob/README.md/screen/SecondLevel.png)
+   ![Второй уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/SecondLevel.png)
   #### Четвертый уровень
-  ![Четвертый уровень](https://github.com/Holy-Fame/Battle-city/blob/README.md/screen/FourthLevel.png)
+  ![Четвертый уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/FourthLevel.png)
   #### Пятый уровень
-   ![Пятый уровень](https://github.com/Holy-Fame/Battle-city/blob/README.md/screen/FifthLevel.png)
+   ![Пятый уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/FifthLevel.png)
