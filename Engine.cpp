@@ -3,6 +3,66 @@
 #include "Bots.h"
 #include <random>
 
+void printTableScore(std::vector<Tank>& players, sf::RenderWindow& window)
+{
+	sf::Image interfaceImage;
+	interfaceImage.loadFromFile("image/interface.png");
+	sf::Texture interface;
+	interface.loadFromImage(interfaceImage);
+	sf::Sprite s_Interface;
+	s_Interface.setTexture(interface);
+
+	sf::Image ScoreImage;
+
+	if (players.size() == 1)
+	{	
+		ScoreImage.loadFromFile("image/tableScore1.png");
+	}
+	else
+	{
+		ScoreImage.loadFromFile("image/tableScore2.png");
+	}
+
+	sf::Texture Score;
+	Score.loadFromImage(ScoreImage);
+	sf::Sprite s_Score;
+	s_Score.setTexture(Score);
+	s_Score.setTextureRect(sf::IntRect(0, 0, 1920, 1080));
+
+	sf::Text txt;
+	txt.setFont(AssetManager::GetFont("font/ROGFontsv1.6-Regular.ttf"));
+
+	window.clear();
+	while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		window.draw(s_Score);
+		if (players.size() == 1)
+		{
+ 			
+			txt.setString(std::to_string(players[0].playerScore));
+			txt.setFillColor(sf::Color::Black);
+			txt.setPosition(1100, 270);
+			txt.setCharacterSize(100);
+			window.draw(txt);
+		}
+		else
+		{
+			txt.setString(std::to_string(players[0].playerScore));
+			txt.setFillColor(sf::Color::Black);
+			txt.setPosition(1100, 270);
+			txt.setCharacterSize(100);
+			window.draw(txt);
+
+			txt.setString(std::to_string(players[1].playerScore));
+			txt.setFillColor(sf::Color::Black);
+			txt.setPosition(1100, 525);
+			txt.setCharacterSize(100);
+			window.draw(txt);
+		}
+		window.display();
+	}
+}
+
 void NextLevelPicture(sf::RenderWindow& window, int level)
 {
 	sf::Image interfaceImage;
@@ -279,7 +339,7 @@ int getRandomNumber(int min, int max)
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& mapsArr, std::vector<std::vector<std::string>>& bots)
+void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots)
 {
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -287,10 +347,10 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
 
-	std::vector<Tank> players;
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
+	std::vector<Tank> players;
 	players.push_back(p1);
 
 	sf::Image enemy1Image;
@@ -340,7 +400,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 
 	sf::Clock clock;
 	
-	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
+	for (int levelNumber = 0; levelNumber < 1; ++levelNumber)
 	{
 		int botsCount = 10;
 		NextLevelPicture(window, levelNumber);
@@ -361,7 +421,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				{
 					if (event.key.code == sf::Keyboard::Space)
 					{
-						bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
+						bullets.push_back(new Bullet(bulletImage, players[0].x, players[0].y, 10, 10, players[0].state, "Bullet"));
 						shoot.play();
 					}
 					if (event.key.code == sf::Keyboard::O)
@@ -392,43 +452,43 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
 				Enemy* e = *ite;
-				if (e->sprite.getGlobalBounds().intersects(p1.sprite.getGlobalBounds()))
+				if (e->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()))
 				{
 					if (e->dx > 0)
 					{
-						e->x = p1.x - e->w;
+						e->x = players[0].x - e->w;
 						e->dx = 0;
 					}
 					if (e->dx < 0)
 					{
-						e->x = p1.x + e->w;
+						e->x = players[0].x + e->w;
 						e->dx = 0;
 					}
 					if (e->dy > 0)
 					{
-						e->y = p1.y - e->h;
+						e->y = players[0].y - e->h;
 						e->dy = 0;
 					}
 					if (e->dy < 0)
 					{
-						e->y = p1.y + e->h;
+						e->y = players[0].y + e->h;
 						e->dy = 0;
 					}
-					if (p1.dx > 0)
+					if (players[0].dx > 0)
 					{
-						p1.x = e->x - p1.w;
+						players[0].x = e->x - players[0].w;
 					}
-					if (p1.dx < 0)
+					if (players[0].dx < 0)
 					{
-						p1.x = e->x + e->w;
+						players[0].x = e->x + e->w;
 					}
-					if (p1.dy > 0)
+					if (players[0].dy > 0)
 					{
-						p1.y = e->y - p1.h;
+						players[0].y = e->y - players[0].h;
 					}
-					if (p1.dy < 0)
+					if (players[0].dy < 0)
 					{
-						p1.y = e->y + e->h;
+						players[0].y = e->y + e->h;
 					}
 				}
 			}
@@ -462,6 +522,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 
 				if (e->life == false)
 				{
+					players[0].playerScore += e->name == "Enemy1" ? 100 : 200;
 					ite = enemies.erase(ite);
 					delete e;
 					--botsCount;
@@ -471,8 +532,8 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 					ite++;
 				}
 			}
-			
-			p1.update(time, mapsArr[levelNumber]);
+
+			players[0].update(time, mapsArr[levelNumber]);
 			window.clear();
 
 			window.draw(background);
@@ -493,14 +554,19 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 					window.draw(explosionSprite);
 				}
 			}
-
 			printInterface(players, bots[levelNumber].size(), window, levelNumber);
 			if (botsCount == 0)
 			{
-				p1.x = 800;
-				p1.y = 980;
-				p1.sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
-				window.draw(p1.sprite);
+				for (itb = bullets.begin(); itb != bullets.end();)
+				{
+					Entity* b = *itb;
+					itb = bullets.erase(itb);
+					delete b;
+				}
+				players[0].x = 800;
+				players[0].y = 980;
+				players[0].sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+				window.draw(players[0].sprite);
 				break;
 			}
 
@@ -528,11 +594,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			{
 				window.draw((*ite)->sprite);
 			}
-			window.draw(p1.sprite);
+			window.draw(players[0].sprite);
 			window.display();
-		}	
+		}
 
 		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
+	printTableScore(players, window);
 }
 
