@@ -27,5 +27,7 @@ public:
 	void GameMenu();
 	Engine();
 	void run();
-	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots);
+	bool SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots);
+	void StartGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots);
+	bool GameOver(std::vector<Tank>& players, sf::RenderWindow& window);
 };

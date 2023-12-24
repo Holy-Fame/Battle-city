@@ -312,7 +312,7 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window, mapsArr, bots);
+						StartGame(window, mapsArr, bots);
 						break;
 					case 1:
 						continue;
@@ -339,7 +339,12 @@ int getRandomNumber(int min, int max)
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots)
+void Engine::StartGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots)
+{
+	if (SingleGame(window, mapsArr, bots)) { return StartGame(window, mapsArr, bots); }
+}
+
+bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots)
 {
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -623,6 +628,11 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				break;
 			}
 
+			if (players[0].health <= 0)
+			{
+				return GameOver(players, window);
+			}
+
 			if (isPause == false)
 			{
 				for (itb = bullets.begin(); itb != bullets.end();)
@@ -664,4 +674,33 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
 	printTableScore(players, window);
+	return false;
+}
+
+bool Engine::GameOver(std::vector<Tank>& players, sf::RenderWindow& window)
+{
+	sf::Image gameOverImage;
+	gameOverImage.loadFromFile("image/gameOver.png");
+	sf::Texture gameOverTexture;
+	gameOverTexture.loadFromImage(gameOverImage);
+	sf::Sprite gameOverSprite;
+	gameOverSprite.setTexture(gameOverTexture);
+	gameOverSprite.setPosition(836, 1080);
+
+	float speed = 0.5f;
+	while (!sf::Keyboard::isKeyPressed(sf::Keyboard::BackSpace))
+	{
+		float deltaTime = 0.1f;
+		gameOverSprite.move(0, -speed * deltaTime);
+		if (gameOverSprite.getPosition().y < window.getSize().y / 2 - gameOverSprite.getLocalBounds().height / 2)
+		{
+			gameOverSprite.setPosition(gameOverSprite.getPosition().x, window.getSize().y / 2 - gameOverSprite.getLocalBounds().height / 2);
+		}
+		window.clear();
+		window.draw(gameOverSprite);
+		window.display();
+	}
+
+	printTableScore(players, window);
+	return false;
 }
