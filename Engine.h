@@ -24,8 +24,10 @@ class Engine
 	void draw();
 
 public:
+	void GameRun(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots, int mode);
 	void GameMenu();
 	Engine();
 	void run();
-	void SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots);
+	bool SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots, int mode);
+	bool GameOver(std::vector<Tank>& players, sf::RenderWindow& window);
 };
