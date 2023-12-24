@@ -3,33 +3,56 @@
 Tank::Tank(sf::Image& image, float X, float Y, int W, int H, sf::String Name) : Entity(image, X, Y, W, H, Name)
 {
 	playerScore = 0; state = up; health = 3;
-	if (name == "Player1")
-	{
-		sprite.setTextureRect(sf::IntRect(0, 180, w, h));
-	}
+	sprite.setTextureRect(sf::IntRect(0, 180, w, h));
 }
 
 void Tank::control()
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+	if (name == "Player1")
 	{
-		state = left; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			state = left; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-		state = right; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+			state = right; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
-		state = up; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
-	}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+			state = up; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-		state = down; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			state = down; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+		}
+	}
+	else
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		{
+			state = left; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+			state = right; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+			state = up; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+			state = down; speed = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+		}
 	}
 }
 

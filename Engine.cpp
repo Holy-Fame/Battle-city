@@ -312,10 +312,11 @@ void Engine::GameMenu()
 					switch (mymenu.getSelectedMenuNumber())
 					{
 					case 0:
-						SingleGame(window, mapsArr, bots);
+						GameRun(window, mapsArr, bots, 1);
 						break;
 					case 1:
-						continue;
+						GameRun(window, mapsArr, bots, 2);
+						break;
 					case 2:
 						exit(0);
 						break;
@@ -333,13 +334,18 @@ void Engine::GameMenu()
 	}
 }
 
+void Engine::GameRun(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots, int mode)
+{
+	if (SingleGame(window, mapsArr, bots, mode)) { GameRun(window, mapsArr, bots, mode); }
+}
+
 int getRandomNumber(int min, int max)
 {
 	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
 	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots)
+bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsArr, std::vector<std::vector<std::string>> bots, int mode)
 {
 	float width = sf::VideoMode::getDesktopMode().width;
 	float height = sf::VideoMode::getDesktopMode().height;
@@ -356,9 +362,18 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
+	sf::Image playerImage2;
+	playerImage2.loadFromFile("image/tank2.png");
 	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
 	std::vector<Tank> players;
 	players.push_back(p1);
+
+
+	Tank p2(playerImage2, 740, 980, 60, 60, "Player2");
+	if (mode == 2)
+	{
+		players.push_back(p2);
+	}
 
 	sf::Image enemy1Image;
 	enemy1Image.loadFromFile("image/enemy1.png");
@@ -441,11 +456,21 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 					isPause = false;
 				}
 
+				if (isPause == true && event.key.code == sf::Keyboard::BackSpace)
+				{
+					return true;
+				}
+
 				if (event.type == sf::Event::KeyReleased && isPause == false)
 				{
 					if (event.key.code == sf::Keyboard::Space)
 					{
-						bullets.push_back(new Bullet(bulletImage, players[0].x, players[0].y, 10, 10, players[0].state, "Bullet"));
+						bullets.push_back(new Bullet(bulletImage, players[0].x, players[0].y, 10, 10, players[0].state, "Bullet1"));
+						shoot.play();
+					}
+					if (event.key.code == sf::Keyboard::P)
+					{
+						bullets.push_back(new Bullet(bulletImage, players[1].x, players[1].y, 10, 10, players[1].state, "Bullet2"));
 						shoot.play();
 					}
 					if (event.key.code == sf::Keyboard::O)
@@ -460,12 +485,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				spawnTimer += time;
 			}
 
-			if (enemies.size() >= 4)
+			if (enemies.size() >= 5)
 			{
 				spawnTimer = 0;
 			}
 
-			if (spawnTimer > 8000 && isPause == false)
+			if (spawnTimer > 3000 && isPause == false)
 			{
 				if (bots[levelNumber].size() != 0)
 				{
@@ -485,73 +510,130 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
 				Enemy* e = *ite;
-				if (e->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()))
+				for (int i = 0; i < players.size(); ++i)
 				{
-					if (e->dx > 0)
+					if (e->sprite.getGlobalBounds().intersects(players[i].sprite.getGlobalBounds()))
 					{
-						e->x = players[0].x - e->w;
-						e->dx = 0;
-					}
-					if (e->dx < 0)
-					{
-						e->x = players[0].x + e->w;
-						e->dx = 0;
-					}
-					if (e->dy > 0)
-					{
-						e->y = players[0].y - e->h;
-						e->dy = 0;
-					}
-					if (e->dy < 0)
-					{
-						e->y = players[0].y + e->h;
-						e->dy = 0;
-					}
-					if (players[0].dx > 0)
-					{
-						players[0].x = e->x - players[0].w;
-					}
-					if (players[0].dx < 0)
-					{
-						players[0].x = e->x + e->w;
-					}
-					if (players[0].dy > 0)
-					{
-						players[0].y = e->y - players[0].h;
-					}
-					if (players[0].dy < 0)
-					{
-						players[0].y = e->y + e->h;
+						if (e->dx > 0)
+						{
+							e->x = players[i].x - e->w;
+							e->dx = 0;
+						}
+						if (e->dx < 0)
+						{
+							e->x = players[i].x + e->w;
+							e->dx = 0;
+						}
+						if (e->dy > 0)
+						{
+							e->y = players[i].y - e->h;
+							e->dy = 0;
+						}
+						if (e->dy < 0)
+						{
+							e->y = players[i].y + e->h;
+							e->dy = 0;
+						}
+						if (players[i].dx > 0)
+						{
+							players[i].x = e->x - players[i].w;
+						}
+						if (players[i].dx < 0)
+						{
+							players[i].x = e->x + e->w;
+						}
+						if (players[i].dy > 0)
+						{
+							players[i].y = e->y - players[i].h;
+						}
+						if (players[i].dy < 0)
+						{
+							players[i].y = e->y + e->h;
+						}
 					}
 				}
 			}
 
+			/*if (mode == 2)
+			{
+				if (p1.sprite.getGlobalBounds().intersects(players[1].sprite.getGlobalBounds()))
+				{
+					if (p1.dx > 0)
+					{
+						p1.x = players[1].x - p1.w;
+						p1.dx = 0;
+					}
+					if (p1.dx < 0)
+					{
+						p1.x = players[1].x + p1.w;
+						p1.dx = 0;
+					}
+					if (p1.dy > 0)
+					{
+						p1.y = players[1].y - p1.h;
+						p1.dy = 0;
+					}
+					if (p1.dy < 0)
+					{
+						p1.y = players[1].y + p1.h;
+						p1.dy = 0;
+					}
+					if (players[1].dx > 0)
+					{
+						players[1].x = p1.x - players[1].w;
+					}
+					if (players[1].dx < 0)
+					{
+						players[1].x = p1.x + p1.w;
+					}
+					if (players[1].dy > 0)
+					{
+						players[1].y = p1.y - players[1].h;
+					}
+					if (players[1].dy < 0)
+					{
+						players[1].y = p1.y + p1.h;
+					}
+				}
+			}*/
+
 			for (itb = bullets.begin(); itb != bullets.end(); itb++)
 			{
 				Entity* b = *itb;
-				if (b->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()) && b->name == "BulletEnemy")
+				for (int i = 0; i < players.size(); ++i)
 				{
-					b->life = false;
-					players[0].health -= 1;
-					players[0].x = 800;
-					players[0].y = 980;
-
-					if (players[0].health <= 0)
+					if (b->sprite.getGlobalBounds().intersects(players[i].sprite.getGlobalBounds()) && b->name == "BulletEnemy")
 					{
-						isExplosion = true;
-						explosionClock.restart();
-						explosionSprite.setPosition(players[0].x, players[0].y);
-						explosion.play();
+						b->life = false;
+						players[i].health -= 1;
+						players[i].x = 800;
+						players[i].y = 980;
+
+						if (players[i].health <= 0)
+						{
+							isExplosion = true;
+							explosionClock.restart();
+							explosionSprite.setPosition(players[i].x, players[i].y);
+							explosion.play();
+						}
 					}
 				}
 				for (ite = enemies.begin(); ite != enemies.end(); ite++)
 				{
 					Entity* b = *itb;
 					Enemy* e = *ite;
-					if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()) && b->name == "Bullet")
+					if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()) && b->name != "BulletEnemy")
 					{
 						b->life = false;
 						e->health -= 1;
+						if (b->name == "Bullet1")
+						{
+							players[0].playerScore += e->name == "Enemy1" ? 100 : 200;
+						}
+						else
+						{
+							players[1].playerScore += e->name == "Enemy1" ? 100 : 200;
+						}
 
 						if (e->health <= 0)
 						{
@@ -573,7 +655,6 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 					if (e->life == false)
 					{
-						players[0].playerScore += e->name == "Enemy1" ? 100 : 200;
 						ite = enemies.erase(ite);
 						delete e;
 						--botsCount;
@@ -584,7 +665,10 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 					}
 				}
 
-				players[0].update(time, map);
+				for (int i = 0; i < players.size(); ++i)
+				{
+					players[i].update(time, map);
+				}
 			}
 
 			window.clear();
@@ -616,10 +700,14 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 					itb = bullets.erase(itb);
 					delete b;
 				}
-				players[0].x = 800;
-				players[0].y = 980;
-				players[0].sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
-				window.draw(players[0].sprite);
+
+				for (int i = 0; i < players.size(); ++i)
+				{
+					players[i].x = 800;
+					players[i].y = 980;
+					players[i].sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+					window.draw(players[i].sprite);
+				}
 				break;
 			}
 
@@ -651,7 +739,11 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			{
 				window.draw((*ite)->sprite);
 			}
-			window.draw(players[0].sprite);
+
+			for (int i = 0; i < players.size(); ++i)
+			{
+				window.draw(players[i].sprite);
+			}
 
 			if (isPause)
 			{
@@ -664,4 +756,5 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 		enemies.push_back(new Enemy(enemy1Image, getRandomNumber(450, 1400), 30, 60, 60, "Enemy1"));
 	}
 	printTableScore(players, window);
+	return false;
 }
