@@ -1,7 +1,11 @@
 #include "Enemy.h"
+#include "Bullet.h"
+#include "SFML/Audio.hpp"
 
 Enemy::Enemy(sf::Image& image, float X, float Y, int W, int H, sf::String Name) : Tank(image, X, Y, W, H, Name)
 {
+	changeDirectionTimer = 2600;
+	shootTimer = 0;
 	state = down;
 	if (Name == "Enemy1")
 	{
@@ -14,40 +18,64 @@ Enemy::Enemy(sf::Image& image, float X, float Y, int W, int H, sf::String Name) 
 	sprite.setTextureRect(sf::IntRect(0, 0, w, h));
 }
 
-void Enemy::control()
+int getRandom(int min, int max)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
+	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
+}
+
+void Enemy::control(float time, std::list<Entity*>& bullets)
+{
+	changeDirectionTimer += time;
+	shootTimer += time;
+
+	if (shootTimer > 2000)
 	{
-		state = left; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
+		sf::Image bulletImage;
+		bulletImage.loadFromFile("image/bullet.png");
+		bullets.push_back(new Bullet(bulletImage, x, y, 10, 10, state, "BulletEnemy"));
+		shootTimer = 0;
 	}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-		state = right; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
-	}
+	if (changeDirectionTimer > 3000)
+	{
+		int randNum = getRandom(0, 3);
+		switch (randNum)
+		{
+		case 0:
+		{
+			state = up; dx = 0; dy = -0.12;
+			sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
+			break;
+		}
+		case 1:
+		{
+			state = down; dx = 0; dy = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+			break;
+		}
+		case 2:
+		{
+			state = left; dy = 0; dx = -0.12;
+			sprite.setTextureRect(sf::IntRect(0, 60, 60, 60));
+			break;
+		}
+		case 3:
+		{
+			state = right; dy = 0; dx = 0.12;
+			sprite.setTextureRect(sf::IntRect(0, 120, 60, 60));
+			break;
+		}
+		default: break;
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
-		state = up; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 180, 60, 60));
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
-		state = down; speed = 0.12;
-		sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+		changeDirectionTimer = 0;
 	}
 }
 
-void Enemy::update(float time, sf::String* level)
+void Enemy::update(float time, sf::String* level, std::list<Entity*>& bullets)
 {
-	control();
-	switch (state)
-	{
-	case right: dx = speed; dy = 0; break;
-	case left: dx = -speed; dy = 0; break;
-	case down: dx = 0; dy = speed; break;
-	case up: dx = 0; dy = -speed; break;
-	}
+	control(time, bullets);
 
 	x += dx * time;
 	checkCollisionWithMap(dx, 0, level);
