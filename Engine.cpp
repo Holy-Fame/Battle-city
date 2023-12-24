@@ -554,49 +554,6 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
-			/*if (mode == 2)
-			{
-				if (p1.sprite.getGlobalBounds().intersects(players[1].sprite.getGlobalBounds()))
-				{
-					if (p1.dx > 0)
-					{
-						p1.x = players[1].x - p1.w;
-						p1.dx = 0;
-					}
-					if (p1.dx < 0)
-					{
-						p1.x = players[1].x + p1.w;
-						p1.dx = 0;
-					}
-					if (p1.dy > 0)
-					{
-						p1.y = players[1].y - p1.h;
-						p1.dy = 0;
-					}
-					if (p1.dy < 0)
-					{
-						p1.y = players[1].y + p1.h;
-						p1.dy = 0;
-					}
-					if (players[1].dx > 0)
-					{
-						players[1].x = p1.x - players[1].w;
-					}
-					if (players[1].dx < 0)
-					{
-						players[1].x = p1.x + p1.w;
-					}
-					if (players[1].dy > 0)
-					{
-						players[1].y = p1.y - players[1].h;
-					}
-					if (players[1].dy < 0)
-					{
-						players[1].y = p1.y + p1.h;
-					}
-				}
-			}*/
-
 			for (itb = bullets.begin(); itb != bullets.end(); itb++)
 			{
 				Entity* b = *itb;
@@ -711,14 +668,25 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				break;
 			}
 
-			if (players[0].health <= 0)
+			if (players.size() == 2)
 			{
-				return GameOver(players, window);
+				if (players[0].health <= 0 && players[1].health <= 0)
+				{
+					return GameOver(players, window);
+				}
 			}
+			else
+			{
+				if (players[0].health <= 0)
+				{
+					return GameOver(players, window);
+				}
+			}
+			
 			for (itb = bullets.begin(); itb != bullets.end();)
 			{
 				Entity* b = *itb;
-    			if (b->x > 925 && b->x < 995 && b->y>1000 && b->y < 1060)
+    			if (b->x > 925 && b->x < 995 && b->y>990 && b->y < 1060)
 				{
 					return GameOver(players, window);
 				}
@@ -754,10 +722,33 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				window.draw((*ite)->sprite);
 			}
 
-			for (int i = 0; i < players.size(); ++i)
+			if (players.size() == 2)
 			{
-				window.draw(players[i].sprite);
+				for (int i = 0; i < 2; ++i)
+				{
+					if (players[0].health > 0 && players[1].health > 0)
+						window.draw(players[i].sprite);
+					if (players[0].health > 0 && players[1].health <= 0)
+					{
+						players[1].x = 995;
+						players[1].y = 990;
+						window.draw(players[0].sprite);
+						break;
+					}
+					if (players[0].health <= 0 && players[1].health > 0)
+					{
+						players[0].x = 995;
+						players[0].y = 990;
+						window.draw(players[1].sprite);
+						break;
+					}
+				}
 			}
+			else
+			{
+				window.draw(players[0].sprite);
+			}
+			
 
 			if (isPause)
 			{
