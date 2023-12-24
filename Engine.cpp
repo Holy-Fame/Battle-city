@@ -308,7 +308,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 
 		sf::Event event;
 		while (window.pollEvent(event))
-		{	
+		{
 			if (isPause == false && event.key.code == sf::Keyboard::Escape)
 			{
 				isPause = true;
@@ -323,7 +323,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			{
 				if (event.key.code == sf::Keyboard::Space)
 				{
-					bullets.push_back(new Bullet(bulletImage, p1.x, p1.y, 10, 10, p1.state, "Bullet"));
+					bullets.push_back(new Bullet(bulletImage, players[0].x, players[0].y, 10, 10, players[0].state, "Bullet"));
 					shoot.play();
 				}
 			}
@@ -334,7 +334,12 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			spawnTimer += time;
 		}
 
-		if (spawnTimer > 8000 && isPause == false)
+		if (enemies.size() >= 4)
+		{
+			spawnTimer = 0;
+		}
+
+		if (spawnTimer > 4000 && isPause == false)
 		{
 			if (bots.size() != 0)
 			{
@@ -354,54 +359,71 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		for (ite = enemies.begin(); ite != enemies.end(); ite++)
 		{
 			Enemy* e = *ite;
-			if (e->sprite.getGlobalBounds().intersects(p1.sprite.getGlobalBounds()))
+			if (e->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()))
 			{
 				if (e->dx > 0)
 				{
-					e->x = p1.x - e->w;
+					e->x = players[0].x - e->w;
 					e->dx = 0;
 				}
 				if (e->dx < 0)
 				{
-					e->x = p1.x + e->w;
+					e->x = players[0].x + e->w;
 					e->dx = 0;
 				}
 				if (e->dy > 0)
 				{
-					e->y = p1.y - e->h;
+					e->y = players[0].y - e->h;
 					e->dy = 0;
 				}
 				if (e->dy < 0)
 				{
-					e->y = p1.y + e->h;
+					e->y = players[0].y + e->h;
 					e->dy = 0;
 				}
-				if (p1.dx > 0)
+				if (players[0].dx > 0)
 				{
-					p1.x = e->x - p1.w;
+					players[0].x = e->x - players[0].w;
 				}
-				if (p1.dx < 0)
+				if (players[0].dx < 0)
 				{
-					p1.x = e->x + e->w;
+					players[0].x = e->x + e->w;
 				}
-				if (p1.dy > 0)
+				if (players[0].dy > 0)
 				{
-					p1.y = e->y - p1.h;
+					players[0].y = e->y - players[0].h;
 				}
-				if (p1.dy < 0)
+				if (players[0].dy < 0)
 				{
-					p1.y = e->y + e->h;
+					players[0].y = e->y + e->h;
 				}
 			}
 		}
 
 		for (itb = bullets.begin(); itb != bullets.end(); itb++)
 		{
+			Entity* b = *itb;
+			if (b->sprite.getGlobalBounds().intersects(players[0].sprite.getGlobalBounds()) && b->name == "BulletEnemy")
+			{
+				b->life = false;
+				players[0].health -= 1;
+				players[0].x = 800;
+				players[0].y = 980;
+
+				if (players[0].health <= 0)
+				{
+					isExplosion = true;
+					explosionClock.restart();
+					explosionSprite.setPosition(players[0].x, players[0].y);
+					explosion.play();
+				}
+			}
+
 			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
 				Entity* b = *itb;
 				Enemy* e = *ite;
-				if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()))
+				if (b->sprite.getGlobalBounds().intersects(e->sprite.getGlobalBounds()) && b->name == "Bullet")
 				{
 					b->life = false;
 					e->health -= 1;
@@ -416,6 +438,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				}
 			}
 		}
+
 
 		if (isPause == false)
 		{
@@ -437,7 +460,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 			for (ite = enemies.begin(); ite != enemies.end();)
 			{
 				Enemy* e = *ite;
-				e->update(time, mapsArr[levelNumber]);
+				e->update(time, mapsArr[levelNumber], bullets);
 				if (e->life == false)
 				{
 					ite = enemies.erase(ite);
@@ -449,11 +472,11 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 				}
 			}
 
-			p1.update(time, mapsArr[levelNumber]);
+			players[0].update(time, mapsArr[levelNumber]);
 		}
 
 		window.clear();
-		
+
 		window.draw(background);
 
 		printMap(window, mapsArr[levelNumber]);
@@ -483,7 +506,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*>& maps
 		{
 			window.draw((*ite)->sprite);
 		}
-		window.draw(p1.sprite);
+		window.draw(players[0].sprite);
 
 		if (isPause)
 		{
