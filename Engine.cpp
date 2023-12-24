@@ -346,7 +346,8 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	sf::RectangleShape background(sf::Vector2f(1920, 1080));
 	background.setTexture(&AssetManager::GetTexture("image/game.png"));
-
+	std::vector<Tank> players;
+  
 	sf::Image playerImage;
 	playerImage.loadFromFile("image/tank.png");
 	Tank p1(playerImage, 800, 980, 60, 60, "Player1");
@@ -400,7 +401,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	sf::Clock clock;
 	
-	for (int levelNumber = 0; levelNumber < 1; ++levelNumber)
+	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
 	{
 		int botsCount = 10;
 		NextLevelPicture(window, levelNumber);
@@ -435,6 +436,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 					}
 				}
 			}
+
 
 			spawnTimer += time;
 			if (spawnTimer > 1000)
@@ -574,7 +576,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				window.draw(players[0].sprite);
 				break;
 			}
-
+      
 			for (itb = bullets.begin(); itb != bullets.end();)
 			{
 				Entity* b = *itb;
@@ -595,6 +597,7 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				window.draw((*itb)->sprite);
 			}
 
+     
 			for (ite = enemies.begin(); ite != enemies.end(); ite++)
 			{
 				window.draw((*ite)->sprite);
@@ -607,4 +610,3 @@ void Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 	}
 	printTableScore(players, window);
 }
-
