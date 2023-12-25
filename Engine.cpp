@@ -3,6 +3,32 @@
 #include "Bots.h"
 #include <random>
 
+void Immortality(sf::String* map, bool flag)
+{
+	if (flag)
+	{
+		map[23][11] = 'w';
+		map[23][12] = 'w';
+		map[23][13] = 'w';
+		map[23][14] = 'w';
+		map[24][11] = 'w';
+		map[25][11] = 'w';
+		map[24][14] = 'w';
+		map[25][14] = 'w';
+	}
+	else
+	{
+		map[23][11] = '#';
+		map[23][12] = '#';
+		map[23][13] = '#';
+		map[23][14] = '#';
+		map[24][11] = '#';
+		map[25][11] = '#';
+		map[24][14] = '#';
+		map[25][14] = '#';
+	}
+}
+
 void printTableScore(std::vector<Tank>& players, sf::RenderWindow& window)
 {
 	sf::Image interfaceImage;
@@ -384,6 +410,9 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 	std::list<Enemy*>::iterator ite;
 	std::list<Enemy*>::iterator ite2;
 
+	std::list<Bonus*> bonuses;
+	std::list<Bonus*>::iterator itbo;
+
 	sf::Image bulletImage;
 	bulletImage.loadFromFile("image/bullet.png");
 
@@ -426,6 +455,10 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 	for (int levelNumber = 0; levelNumber < 5; ++levelNumber)
 	{
+		bool isStopTime = false;
+		float stopTimeTimer = 0;
+		bool isDef = false;
+		float defTimer = 0;
 		int botsCount = 10;
 		NextLevelPicture(window, levelNumber);
 		sf::String map[MAP_HIGHT];
@@ -480,6 +513,29 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
+			if (isStopTime == true)
+			{
+				stopTimeTimer += time;
+			}
+
+			if (stopTimeTimer > 5000)
+			{
+				isStopTime = false;
+				stopTimeTimer = 0;
+			}
+
+			if (isDef == true)
+			{
+				defTimer += time;
+			}
+
+			if (defTimer > 10000)
+			{
+				isDef = false;
+				Immortality(map, false);
+				defTimer = 0;
+			}
+
 			if (isPause == false)
 			{
 				spawnTimer += time;
@@ -490,7 +546,7 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				spawnTimer = 0;
 			}
 
-			if (spawnTimer > 3000 && isPause == false)
+			if (spawnTimer > 3000 && isPause == false && isStopTime == false)
 			{
 				if (bots[levelNumber].size() != 0)
 				{
@@ -594,6 +650,11 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 
 						if (e->health <= 0)
 						{
+							if (botsCount % 4 == 0)
+							{
+								Bonus::Spawn(bonuses, e->x, e->y);
+							}
+
 							isExplosion = true;
 							explosionClock.restart();
 							explosionSprite.setPosition(e->x, e->y);
@@ -603,12 +664,50 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 				}
 			}
 
+
+			for (itbo = bonuses.begin(); itbo != bonuses.end();)
+			{
+				Bonus* b = *itbo;
+
+				for (int i = 0; i < players.size(); ++i)
+				{
+					if (players[i].sprite.getGlobalBounds().intersects(b->sprite.getGlobalBounds()))
+					{
+						if (b->name == "hp" && players[i].health < 3)
+						{
+							players[i].health += 1;
+						}
+
+						if (b->name == "time")
+						{
+							isStopTime = true;
+						}
+
+						if (b->name == "def")
+						{
+							isDef = true;
+							Immortality(map, true);
+						}
+
+						itbo = bonuses.erase(itbo);
+						delete b;
+					}
+					else if (i == players.size() - 1 && itbo != bonuses.end())
+					{
+						itbo++;
+					}
+				}
+			}
+
 			if (isPause == false)
 			{
 				for (ite = enemies.begin(); ite != enemies.end();)
 				{
 					Enemy* e = *ite;
-					e->update(time, map, bullets);
+					if (isStopTime == false)
+					{
+						e->update(time, map, bullets);
+					}
 
 					if (e->life == false)
 					{
@@ -621,7 +720,10 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 						ite++;
 					}
 				}
+			}
 
+			if (isPause == false)
+			{
 				for (int i = 0; i < players.size(); ++i)
 				{
 					players[i].update(time, map);
@@ -682,11 +784,11 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 					return GameOver(players, window);
 				}
 			}
-			
+
 			for (itb = bullets.begin(); itb != bullets.end();)
 			{
 				Entity* b = *itb;
-    			if (b->x > 925 && b->x < 995 && b->y>990 && b->y < 1060)
+				if (b->x > 925 && b->x < 995 && b->y>990 && b->y < 1060)
 				{
 					return GameOver(players, window);
 				}
@@ -748,11 +850,16 @@ bool Engine::SingleGame(sf::RenderWindow& window, std::vector<sf::String*> mapsA
 			{
 				window.draw(players[0].sprite);
 			}
-			
+
 
 			if (isPause)
 			{
 				window.draw(pauseSprite);
+			}
+
+			for (itbo = bonuses.begin(); itbo != bonuses.end(); itbo++)
+			{
+				window.draw((*itbo)->sprite);
 			}
 
 			window.display();
@@ -791,3 +898,4 @@ bool Engine::GameOver(std::vector<Tank>& players, sf::RenderWindow& window)
 	printTableScore(players, window);
 	return false;
 }
+
