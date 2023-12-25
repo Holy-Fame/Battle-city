@@ -1,56 +1,54 @@
 #include <SFML/Graphics.hpp>
 #include "Bonus.h"
-#include "random"
 
-
-Bonus::Bonus(sf::Texture& texture, int numBonuses, int fieldWidth, int fieldHeight, int duration)
-    : m_texture(texture)
-    , m_fieldWidth(fieldWidth)
-    , m_fieldHeight(fieldHeight)
-    , m_duration(duration)
+Bonus::Bonus(sf::Image& image, float X, float Y, sf::String Name)
 {
-    randomPlacementBonuses(numBonuses, fieldWidth, fieldHeight);
+	x = X; y = Y; name = Name;
+	texture.loadFromImage(image);
+	sprite.setTexture(texture);
+
+	if (Name == "hp")
+	{
+		sprite.setTextureRect(sf::IntRect(0, 0, 60, 60));
+	}
+
+	if (Name == "time")
+	{
+		sprite.setTextureRect(sf::IntRect(60, 0, 60, 60));
+	}
+
+	if (Name == "def")
+	{
+		sprite.setTextureRect(sf::IntRect(120, 0, 60, 60));
+	}
+
+	sprite.setPosition(x, y);
 }
 
-void Bonus::update(float deltaTime)
+int Random(int min, int max)
 {
-    for (auto it = m_bonuses.begin(); it != m_bonuses.end();)
-    {
-        if (it->clock.getElapsedTime().asSeconds() > m_duration)
-        {
-            it = m_bonuses.erase(it);
-        }
-        else
-        {
-            ++it;
-        }
-    }
+	static const double fraction = 1.0 / (static_cast<double>(RAND_MAX) + 1.0);
+	return static_cast<int>(rand() * fraction * (max - min + 1) + min);
 }
 
-void Bonus::draw(sf::RenderWindow& window)
+void Bonus::Spawn(std::list<Bonus*>& bonuses, float X, float Y)
 {
-    for (const auto& bonus : m_bonuses)
-    {
-        window.draw(bonus.sprite);
-    }
-}
+	sf::Image bonusImage;
+	bonusImage.loadFromFile("image/bonus.png");
+	int bonusType = Random(0, 2);
 
-void Bonus::randomPlacementBonuses(int numBonuses, int fieldWidth, int fieldHeight)
-{
-    std::mt19937 seedGenerator;
-    seedGenerator.seed(std::random_device()());
-    std::uniform_int_distribution<int> seedDistributor;
-
-    for (int i = 0; i < numBonuses; ++i)
-    {
-        int x = seedDistributor(seedGenerator) % fieldWidth;
-        int y = seedDistributor(seedGenerator) % fieldHeight;
-
-        BonusInfo bonusInfo;
-        bonusInfo.sprite.setTexture(m_texture);
-        bonusInfo.sprite.setPosition(x, y);
-        bonusInfo.clock.restart();
-
-        m_bonuses.push_back(bonusInfo);
-    }
+	switch (bonusType)
+	{
+	case 0:
+		bonuses.push_back(new Bonus(bonusImage, X, Y, "hp"));
+		break;
+	case 1:
+		bonuses.push_back(new Bonus(bonusImage, X, Y, "time"));
+		break;
+	case 2:
+		bonuses.push_back(new Bonus(bonusImage, X, Y, "def"));
+		break;
+	default:
+		break;
+	}
 }

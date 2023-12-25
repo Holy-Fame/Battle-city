@@ -11,6 +11,7 @@
 #include <vector>
 #include <list>
 #include "Enemy.h"
+#include "Bonus.h"
 
 class Engine
 {
