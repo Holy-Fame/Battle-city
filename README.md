@@ -68,3 +68,11 @@ Battle City состоит из 5 различных этапов. Каждая 
   ![Четвертый уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/FourthLevel.png)
   #### Пятый уровень
    ![Пятый уровень](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/FifthLevel.png)
+  #### Мультиплеер
+   ![Мультиплеер](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/multyplayer.png)
+  #### Победа
+   ![Победа в одиночной игре](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/WinSolo.png)
+   ![Победа в мультиплеере](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/WinMulty.png)
+  #### Поражение
+   ![Поражение](https://github.com/Holy-Fame/Battle-city/blob/master/screenshots/image_2023-12-24_23-24-25.png)
+   
